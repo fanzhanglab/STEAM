@@ -1,11 +1,12 @@
-neighborhood_averaging <- function(matrix, coordinates, labels, n_size) {
-  
-  labs <- levels(factor(labels))
+neighborhood_averaging <- function(matrix, coordinates, labels, n_size, seed) {
+  set.seed(seed)
   avg_mat <- matrix
   
-  for (i in 1:length(labs)) {
-    mat <- matrix[, which(labels == labs[i])]
-    wc <- coordinates[which(labels == labs[i]),]
+  rn <- levels(factor(labels))
+  
+  for (i in seq_along(rn)) {
+    mat <- matrix[, which(labels == rn[i])]
+    wc <- coordinates[which(labels == rn[i]),]
     
     for (j in 1:ncol(mat)) {
       roi <- wc[j, 2]
@@ -17,17 +18,11 @@ neighborhood_averaging <- function(matrix, coordinates, labels, n_size) {
       neighs <- which((allrows %in% c((roi - n_size):(roi + n_size))) & 
                         (allcols %in% c((coi - n_size):(coi + n_size))))
       
-      if (length(neighs) < 2) {
-        next
-      }
+      if (length(neighs) < 2) next
       
-      newj <- rowMeans(mat[, neighs])
-
-      avg_mat[, colnames(mat)[j]] <- newj
+      avg_mat[,colnames(mat)[j]] <- rowMeans(mat[, neighs])
     }
   }
-  
-  message("Finished neighborhood averaging")
-  
+
   return(avg_mat)
 }
