@@ -20,7 +20,9 @@ RunSTEAM <- function(matrix, coordinates, labels, train_ratio, n_size, seed, n_t
   return(results)
 }
 
-
+library(caret)
+library(randomForest)
+library(e1071)
 
 DLPFCs <- readRDS("DLPFC.RDS")
 gl <- readRDS("DLPFCGeneList.RDS")
