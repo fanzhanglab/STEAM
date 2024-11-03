@@ -8,8 +8,8 @@ RunSTEAM <- function(matrix, coordinates, labels, train_ratio, n_size, seed, n_t
   train_coords <- data$train$coordinates
   test_coords <- data$test$coordinates
   
-  avg_train_matrix <- neighborhood_averaging(train_matrix, train_coords, train_labels, n_size, seed)
-  avg_test_matrix <- neighborhood_averaging(test_matrix, test_coords, test_labels, n_size, seed)
+  avg_train_matrix <- neighborhood_averaging(train_matrix, train_coords, train_labels, n_size, seed, is_train = TRUE)
+  avg_test_matrix <- neighborhood_averaging(test_matrix, test_coords, n_size = n_size, seed = seed, is_train = FALSE)
   
   message("Finished neighborhood averaging")
   

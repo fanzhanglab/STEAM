@@ -1,8 +1,9 @@
-neighborhood_averaging <- function(matrix, coordinates, labels, n_size, seed) {
+neighborhood_averaging <- function(matrix, coordinates, labels = NULL , n_size, seed, is_train = TRUE ) {
   set.seed(seed)
   avg_mat <- matrix
   
-  rn <- levels(factor(labels))
+  if (is_train) {
+    rn <- levels(factor(labels))
   
   for (i in seq_along(rn)) {
     mat <- matrix[, which(labels == rn[i])]
@@ -23,6 +24,23 @@ neighborhood_averaging <- function(matrix, coordinates, labels, n_size, seed) {
       avg_mat[,colnames(mat)[j]] <- rowMeans(mat[, neighs])
     }
   }
+} else {
+  for (j in 1:ncol(matrix)) {
+    roi <- coordinates[j, 2]
+    coi <- coordinates[j, 3]
+    
+    allrows <- coordinates[, 2]
+    allcols <- coordinates[, 3]
+    
+    neighs <- which((allrows %in% c((roi - n_size):(roi + n_size))) & 
+                      (allcols %in% c((coi - n_size):(coi + n_size))))
+    
+    if (length(neighs) < 2) next
+    
+    avg_mat[, j] <- rowMeans(matrix[, neighs])
+    
+  }
+}
 
   return(avg_mat)
 }
