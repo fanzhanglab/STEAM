@@ -1,4 +1,4 @@
-neighborhood.avg() <- function(matrix, coordinates, labels = NULL, n_size, seed, is_train = TRUE) {
+neighborhood.avg <- function(matrix, coordinates, labels = NULL, n_size, seed, is_train = TRUE) {
   set.seed(seed)
   avg_mat <- matrix
 

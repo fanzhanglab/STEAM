@@ -9,8 +9,6 @@ model.train <- function(matrix, labels, model, seed, k = 5, rf_grid = NULL, svm_
   df <- data.frame(labels = factor(labels), t(matrix))
   df[-1] <- lapply(df[-1], as.numeric)
 
-  # Convert labels to "Class1" and "Class0" for binary classification compatibility with twoClassSummary
-  levels(df$labels) <- c("Class0", "Class1")
 
   # Cross-validation setup with ROC metrics
   train_control <- trainControl(
