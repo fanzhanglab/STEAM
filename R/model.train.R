@@ -1,102 +1,81 @@
+library(randomForest)
+library(e1071)
 library(caret)
-library(pROC)
-library(ggplot2)
-library(reshape2)
 
-model.train <- function(matrix, labels, model, seed, k = 5, rf_grid = NULL, svm_grid = NULL) {
+model.train <- function(matrix, labels, model, seed, n_tree = NULL, kernel = NULL, scale = TRUE, cv_folds = 5, folder_name = 'train.out') {
   set.seed(seed)
 
-  # Prepare data frame
-  df <- data.frame(labels = factor(labels), t(matrix))
-  df[-1] <- lapply(df[-1], as.numeric)
-
-  # Cross-validation setup with accuracy metric (adaptable for multiclass)
-  train_control <- trainControl(
-    method = "cv",
-    number = k,
-    search = "grid",
-    classProbs = TRUE,
-    summaryFunction = multiClassSummary,  # Summary for multiclass metrics
-    savePredictions = "final"
-  )
-
-  # Create "train" directory if it doesn't exist
-  if (!dir.exists("train")) {
-    dir.create("train")
+  # Prepare the data frame
+  df <- data.frame(labels = labels, t(matrix))
+  df$labels <- factor(df$labels)
+  for (i in 2:ncol(df)) {
+    df[, i] <- as.numeric(df[, i])
   }
 
-  # Function to save ROC plots for each class in multiclass setting
-  save_multiclass_roc_plot <- function(predictions, labels, model_name) {
-    levels_list <- levels(labels)
-    for (level in levels_list) {
-      roc_obj <- roc(as.numeric(predictions == level), as.numeric(labels == level))
-      roc_auc <- auc(roc_obj)
+  train_index <- createDataPartition(df$labels, p = 0.8, list = FALSE)
+  train_data <- df[train_index, ]
+  valid_data <- df[-train_index, ]
 
-      # Plot ROC curve for the current class
-      roc_plot <- ggroc(roc_obj) +
-        ggtitle(paste(model_name, "ROC Curve - Class", level, "(AUC:", round(roc_auc, 2), ")")) +
-        xlab("False Positive Rate") +
-        ylab("True Positive Rate")
-
-      # Save plot
-      ggsave(filename = paste0("train/", model_name, "_ROC_Curve_Class_", level, ".png"), plot = roc_plot)
-    }
-  }
+  train_control <- trainControl(method = "cv", number = cv_folds)
 
   if (model == "rf") {
-    # Default grid if none provided
-    if (is.null(rf_grid)) {
-      rf_grid <- expand.grid(mtry = c(1, floor(sqrt(ncol(df) - 1)), floor((ncol(df) - 1) / 3)))
-    }
-
-    rf_model <- train(
-      labels ~ .,
-      data = df,
-      method = "rf",
-      trControl = train_control,
-      tuneGrid = rf_grid,
-      metric = "Accuracy"
-    )
-
-    message("Finished RandomForest model building with cross-validation and grid search")
-
-    # Save ROC plots for each class
-    save_multiclass_roc_plot(rf_model$pred$pred, rf_model$pred$obs, "RandomForest")
-
-    # Save model and metrics
-    saveRDS(rf_model, file = "train/rf_model.rds")
-    write.csv(rf_model$results, file = "train/rf_metrics.csv", row.names = FALSE)
-
-    return(list(model = rf_model, metrics = rf_model$results))
+    # Random Forest model with cross-validation
+    train_model <- train(labels ~ ., data = train_data, method = "rf", trControl = train_control, ntree = n_tree)
+    message("Finished RandomForest model building with cross-validation")
 
   } else if (model == "svm") {
-    # Default grid if none provided
-    if (is.null(svm_grid)) {
-      svm_grid <- expand.grid(C = c(0.1, 1, 10), sigma = c(0.01, 0.05, 0.1))
-    }
+    # SVM model with cross-validation
+    train_model <- train(labels ~ ., data = train_data, method = "svmRadial", trControl = train_control,
+                       preProcess = c("center", "scale"))
+    message("Finished SVM model building with cross-validation")
 
-    svm_model <- train(
-      labels ~ .,
-      data = df,
-      method = "svmRadial",
-      trControl = train_control,
-      tuneGrid = svm_grid,
-      preProcess = c("center", "scale"),
-      metric = "Accuracy"
-    )
-
-    message("Finished SVM model building with cross-validation and grid search")
-
-    # Save ROC plots for each class
-    save_multiclass_roc_plot(svm_model$pred$pred, svm_model$pred$obs, "SVM")
-
-    # Save model and metrics
-    saveRDS(svm_model, file = "train/svm_model.rds")
-    write.csv(svm_model$results, file = "train/svm_metrics.csv", row.names = FALSE)
-
-    return(list(model = svm_model, metrics = svm_model$results))
 
   } else {
-    stop("Model type not supported. Please choose 'rf' (for RandomForest) or 'svm' (for SupportVectorMachine).")
+    stop("Model type is not supported. Please choose 'rf' or 'svm'.")
   }
+  train_pred <- predict(train_model, train_data, type = "prob")
+  valid_pred <- predict(train_model, valid_data, type = "prob")
+  train_roc <- multiclass.roc(train_data$labels, train_pred)
+  valid_roc <- multiclass.roc(valid_data$labels, valid_pred)
+
+  # Create output folder if it doesn't exist
+  if (!dir.exists(folder_name)) {
+    dir.create(folder_name)
+  }
+
+  # # Generate ROC Plot for Training and Validation
+  # plot_roc <- function(roc_obj, title) {
+  #   aucs <- sapply(roc_obj$rocs, function(r) auc(r))
+  #   avg_auc <- mean(aucs)
+  #   roc_plot <- ggplot() +
+  #     labs(title = paste0(title, "\nMean AUC: ", round(avg_auc, 3))) +
+  #     theme_minimal()
+  #   for (r in roc_obj$rocs) {
+  #     roc_df <- data.frame(Sensitivity = r$sensitivities, Specificity = 1 - r$specificities)
+  #     roc_plot <- roc_plot + geom_line(data = roc_df, aes(x = Specificity, y = Sensitivity), alpha = 0.5)
+  #   }
+  #   return(roc_plot)
+  # }
+  #
+  # # Save Plots to PDF
+  # pdf(file.path(folder_name, "train_roc_plots.pdf"), width = 10, height = 5)
+  # train_roc_plot <- plot_roc(train_roc, "Training ROC Curves")
+  # valid_roc_plot <- plot_roc(valid_roc, "Validation ROC Curves")
+  # grid.arrange(train_roc_plot, valid_roc_plot, ncol = 2)
+  # dev.off()
+
+
+
+
+  # Save Model and Metrics
+  train_acc <- mean(predict(train_model, train_data) == train_data$labels)
+  valid_acc <- mean(predict(train_model, valid_data) == valid_data$labels)
+  print(paste("Training Accuracy:", train_acc))
+  print(paste("Validation Accuracy:", valid_acc))
+
+  saveRDS(train_model, file = file.path(folder_name, "train.model.rds"))
+
+  # Return Model and Metrics
+  return(train_model)
+
 }

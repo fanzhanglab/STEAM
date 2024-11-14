@@ -20,18 +20,3 @@ RunSTEAM <- function(matrix, coordinates, labels, train_ratio, n_size, seed, n_t
   return(results)
 }
 
-# library(caret)
-# library(randomForest)
-# library(e1071)
-#
-# DLPFCs <- readRDS("DLPFC.RDS")
-# gl <- readRDS("DLPFCGeneList.RDS")
-# DLPFC <- DLPFCs$`151669`
-# labels <- DLPFC$Labs
-# coordinates <- DLPFC@images$slice1@coordinates[,c(1:3)]
-# matrix <- DLPFC@assays$SCT@scale.data
-# seed <- 22
-# train_ratio <- 0.7
-# n_size <- 3
-#
-# results <- RunSTEAM(matrix, coordinates, labels, train_ratio, n_size, seed, n_tree = 100, model = "rf", kernel = "radial")
