@@ -1,16 +1,15 @@
-data.split <- function(matrix, coordinates, labels, train_ratio, seed){
-  set.seed(seed)
-  ind <- createDataPartition(labels, p = train_ratio, list = FALSE)
+data.split <- function(STEAM.obj, train.ratio){
 
-  train_matrix <- matrix[, ind]
-  train_coords <- coordinates[ind, ]
-  train_labels <- labels[ind]
+  ind <- createDataPartition(STEAM.obj$labels, p = train.ratio, list = FALSE)
 
-  test_matrix <- matrix[, -ind]
-  test_coords <- coordinates[-ind,]
-  test_labels <- labels[-ind]
+  STEAM.obj@train$train.data.matrix <- STEAM.obj$count_exp[, ind]
+  STEAM.obj@train$train.data.coords <- STEAM.obj$spatial[ind, ]
+  STEAM.obj@train$train.data.labels <- STEAM.obj$labels[ind]
 
-  return(list(train = list(matrix = train_matrix, coordinates = train_coords, labels = train_labels),
-              test = list(matrix = test_matrix, coordinates = test_coords, labels = test_labels)))
+  STEAM.obj@test$test.data.matrix <- STEAM.obj$count_exp[, -ind]
+  STEAM.obj@test$test.data.coords <- STEAM.obj$spatial[-ind,]
+  STEAM.obj@test$test.data.labels <- STEAM.obj$labels[-ind]
+
+  return(STEAM.obj)
 
 }

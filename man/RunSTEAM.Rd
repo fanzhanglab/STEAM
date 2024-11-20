@@ -5,38 +5,47 @@
 \title{Training and Evaluating Clustering performance with RunSTEAM()}
 \usage{
 RunSTEAM(
-  matrix,
-  coordinates,
-  labels,
-  train_ratio,
-  n_size,
-  seed,
-  n_tree = 100,
+  STEAM.obj,
+  train.ratio = 0.8,
+  n.size = 5,
+  seed = 123,
+  cv.folds = 10,
+  cv.repeats = 3,
+  trainval.ratio = 0.8,
   model = "rf",
-  kernel = "radial"
+  n.tree = 500,
+  kernel = "linear",
+  train.folder.name = "train.out",
+  allowParallel = FALSE
 )
 }
 \arguments{
-\item{matrix}{gene expression matrix}
+\item{STEAM.obj}{Object of class STEAM.Object from LoadSTEAM()}
 
-\item{coordinates}{spatial/image coordinates}
+\item{train.ratio}{training set ratio. Default is 0.8 (Splits 80\% data for training and 20\% for testing)}
 
-\item{labels}{cell annotations}
+\item{n.size}{Neighborhood size for neighborhood averaging}
 
-\item{train_ratio}{Fraction to set for training (if 0.8 is given, 80\% of data will be split for training. Default is 0.8)}
+\item{seed}{Seed Value. Default is 123}
 
-\item{n_size}{Neighbourhood Size for averaging}
+\item{cv.folds}{#folds for Cross-validation}
 
-\item{seed}{seed value.Default is 123}
+\item{cv.repeats}{#repeats for repeated cross validation}
 
-\item{n_tree}{Number of trees}
+\item{trainval.ratio}{training set ratio for cross-validation. Default is 0.8 (Splits 80\% data for training and 20\% for validation)}
 
-\item{model}{rf or svm}
+\item{model}{Currently available methods - rf (for random forest) , svm (for Support Vector Machine), xgb (for Extreme Gradient Boosting), multinom (for Penalized Multinomial Regression)}
 
-\item{kernel}{Default is Radial for svm}
+\item{n.tree}{#trees (argument valid only for Random Forest). Deafult is 500}
+
+\item{kernel}{Default is Linear (argument valid only for svm)}
+
+\item{train.folder.name}{Training Output folder name}
+
+\item{allowParallel}{Boolean to perform parallel processing, if resources are available. Default is FALSE}
 }
 \value{
-Training model
+S4 Object of class 'STEAM.Object' with all outputs
 }
 \description{
 Training and Evaluating Clustering performance with RunSTEAM()

@@ -1,39 +1,41 @@
-neighborhood.avg <- function(matrix, coordinates, labels = NULL, n_size, seed, is_train = TRUE) {
-  set.seed(seed)
-  avg_mat <- matrix
+neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
 
   if (is_train) {
-    rn <- levels(factor(labels))
+    avg_mat <- STEAM.obj@train$train.data.matrix
+    rn <- levels(factor(STEAM.obj@train$train.data.labels))
 
     for (i in seq_along(rn)) {
-      mat <- matrix[, labels == rn[i]]
-      wc <- coordinates[labels == rn[i], ]
+      mat <- STEAM.obj@train$train.data.matrix[, STEAM.obj@train$train.data.labels == rn[i]]
+      wc <- STEAM.obj@train$train.data.coords[STEAM.obj@train$train.data.labels == rn[i], ]
 
       for (j in seq_len(ncol(mat))) {
         roi <- wc[j, 2]
         coi <- wc[j, 3]
 
-        neighs <- which((wc[, 2] %in% (roi - n_size):(roi + n_size)) &
-                          (wc[, 3] %in% (coi - n_size):(coi + n_size)))
+        neighs <- which((wc[, 2] %in% (roi - n.size):(roi + n.size)) &
+                          (wc[, 3] %in% (coi - n.size):(coi + n.size)))
 
         if (length(neighs) < 2) next
 
         avg_mat[, colnames(mat)[j]] <- rowMeans(mat[, neighs])
       }
     }
+    STEAM.obj@train$avg.matrix <- avg_mat
   } else {
-    for (j in seq_len(ncol(matrix))) {
-      roi <- coordinates[j, 2]
-      coi <- coordinates[j, 3]
+    for (j in seq_len(ncol(STEAM.obj@test$test.data.matrix))) {
+      roi <- STEAM.obj@test$test.data.coords [j, 2]
+      coi <- STEAM.obj@test$test.data.coords [j, 3]
 
-      neighs <- which((coordinates[, 2] %in% (roi - n_size):(roi + n_size)) &
-                        (coordinates[, 3] %in% (coi - n_size):(coi + n_size)))
+      neighs <- which((STEAM.obj@test$test.data.coords [, 2] %in% (roi - n.size):(roi + n.size)) &
+                        (STEAM.obj@test$test.data.coords [, 3] %in% (coi - n.size):(coi + n.size)))
 
       if (length(neighs) < 2) next
 
-      avg_mat[, j] <- rowMeans(matrix[, neighs])
+      avg_mat[, j] <- rowMeans(STEAM.obj@test$test.data.matrix[, neighs])
     }
+    STEAM.obj@test$avg.matrix <- avg_mat
   }
 
-  return(avg_mat)
+
+  return(STEAM.obj)
 }
