@@ -1,5 +1,17 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
 # STEAM <img width="28%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
 
@@ -8,9 +20,12 @@
 
 <!-- badges: start -->
 <!-- badges: end -->
-<p align="justify">
-We introduce STEAM, ……
+<p align = "justify">
+
+We introduce STEAM, ......
 </p>
+
+
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
 
 </br>
@@ -25,28 +40,26 @@ follows:
 # install.packages("devtools")
 devtools::install_github("fanzhanglab/STEAM")
 ```
-
 (OR)
 
 ``` r
 remotes::install_github("fanzhanglab/STEAM")
 ```
-
 <br/>
 
 ### Dependencies / Other required packages
 
 - R (\>= 4.2)
 - ggplot2 (\>= 3.4.2)
-- caret <br/>
+- caret
+<br/>
 
 ## Tutorials
 
-**Step-by-step notebook** of applying STEAM on 10X Visium Human Brain
-Data (DLPFC):
+**Step-by-step notebook** of applying STEAM on 10X Visium Human Brain Data (DLPFC):
 
-- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html">
-  Tutorial of applying STEAM on DLPFC data </a>
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html"> Tutorial of applying STEAM on DLPFC data </a>
+
 
 <br/>
 
@@ -57,19 +70,21 @@ Data (DLPFC):
 STEAM = STEAM_Obj(count = dlpfc$count_exp,
                   spatial = dlpfc$spatial)
 ```
-
-… (skip several preprocessing steps) …
+... (skip several preprocessing steps) ...
 
 ``` r
 
 STEAM <- RunSTEAM(x = STEAM$exp_adj_matrix, z = STEAM$adj_matrix, obj = STEAM, nperms=50, niter=3)
 ```
 
+
 <br/>
+
 
 #### Benchmarcking STEAM:
 
 <!-- <img width="85%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/media/ARI_DLPFC.png"> -->
+
 
 <br/>
 
@@ -94,10 +109,9 @@ emails.
 - **Examples** are required when filing a GitHub issue. In certain
   cases, please share your STEAM object and related codes to understand
   the issues.
-
+  
 <br/>
 
-## Contact
+## Contact 
 
-Please contact [fanzhanglab@gmail.com](fanzhanglab@gmail.com) for
-further questions or protential collaborative opportunities!
+Please contact [fanzhanglab@gmail.com](fanzhanglab@gmail.com) for further questions or protential collaborative opportunities!
