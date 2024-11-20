@@ -10,8 +10,9 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-<img width="32%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
+<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
 
+</br>
 </br>
 </br>
 </br>
