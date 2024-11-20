@@ -1,0 +1,7 @@
+*.html
+.Rproj.user
+.Rproj
+.Rhistory
+.RData
+.Ruserdata
+.Rbuildignore
