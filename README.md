@@ -1,7 +1,7 @@
 
 <img width="28%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
 
-</br> </br>
+</br> </br> </br> </br>
 
 # STEAM
 
