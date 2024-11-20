@@ -1,11 +1,11 @@
 Package: STEAM
 Title: Training and Evaluating Clustering performance with STEAM
-Version: 0.3
+Version: 0.4
 Author: Samantha Reynoso, Courtney Schiebout, Revanth Krishna, Fan Zhang (University of Colorado School of Medicine  - CU Medicine)
 Maintainer: Revanth Krishna <revanth.krishna@cuanschutz.edu>
 Correspondance: Fan Zhang <fan.3.zhang@cuanschutz.edu>
 Description: .... STEAM.
-Date: 2024-11-14
+Date: 2024-11-20
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
