@@ -4,16 +4,14 @@
 #' @param coordinates spatial/image coordinates
 #' @param labels cell annotations
 #' @param train_ratio Fraction to set for training (if 0.8 is given, 80% of data will be split for training. Default is 0.8)
-#' @param n_size Neighbourhood
-#' @param seed
-#' @param n_tree
-#' @param model
-#' @param kernel
+#' @param n_size Neighbourhood Size for averaging
+#' @param seed seed value.Default is 123
+#' @param n_tree Number of trees
+#' @param model rf or svm
+#' @param kernel Default is Radial for svm
 #'
-#' @return
+#' @return Training model
 #' @export
-#'
-#' @examples
 RunSTEAM <- function(matrix, coordinates, labels, train_ratio, n_size, seed, n_tree = 100, model = "rf", kernel = "radial") {
   data <- STEAM:::data.split(matrix, coordinates, labels, train_ratio, seed)
 
