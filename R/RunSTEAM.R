@@ -1,36 +1,42 @@
 #' Training and Evaluating Clustering performance with RunSTEAM()
 #'
-#' @param matrix gene expression matrix
-#' @param coordinates spatial/image coordinates
-#' @param labels cell annotations
-#' @param train_ratio Fraction to set for training (if 0.8 is given, 80% of data will be split for training. Default is 0.8)
-#' @param n_size Neighbourhood Size for averaging
-#' @param seed seed value.Default is 123
-#' @param n_tree Number of trees
-#' @param model rf or svm
-#' @param kernel Default is Radial for svm
 #'
-#' @return Training model
+#' @param STEAM.obj Object of class STEAM.Object from LoadSTEAM()
+#' @param seed Seed Value. Default is 123
+#' @param model Currently available methods - rf (for random forest) , svm (for Support Vector Machine), xgb (for Extreme Gradient Boosting), multinom (for Penalized Multinomial Regression)
+#' @param kernel Default is Linear (argument valid only for svm)
+#' @param train.ratio training set ratio. Default is 0.8 (Splits 80% data for training and 20% for testing)
+#' @param n.size Neighborhood size for neighborhood averaging
+#' @param cv.folds #folds for Cross-validation
+#' @param cv.repeats #repeats for repeated cross validation
+#' @param trainval.ratio training set ratio for cross-validation. Default is 0.8 (Splits 80% data for training and 20% for validation)
+#' @param n.tree #trees (argument valid only for Random Forest). Deafult is 500
+#' @param train.folder.name Training Output folder name
+#' @param allowParallel Boolean to perform parallel processing, if resources are available. Default is FALSE
+#'
+#' @return S4 Object of class 'STEAM.Object' with all outputs
+#'
+#'@import caret
+#'randomForest
+#'e1071
+#'
 #' @export
-RunSTEAM <- function(matrix, coordinates, labels, train_ratio, n_size, seed, n_tree = 100, model = "rf", kernel = "radial") {
-  data <- STEAM:::data.split(matrix, coordinates, labels, train_ratio, seed)
+RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE) {
+  set.seed(seed)
+  STEAM.obj <- data.split(STEAM.obj, train.ratio)
+  message("Finished Data Splitting")
 
-  train_matrix <- data$train$matrix
-  test_matrix <- data$test$matrix
-  train_labels <- data$train$labels
-  test_labels <- data$test$labels
-  train_coords <- data$train$coordinates
-  test_coords <- data$test$coordinates
-
-  avg_train_matrix <- STEAM:::neighborhood.avg(train_matrix, train_coords, train_labels, n_size, seed, is_train = TRUE)
-  avg_test_matrix <- STEAM:::neighborhood.avg(test_matrix, test_coords, n_size = n_size, seed = seed, is_train = FALSE)
-
+  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size, is_train = TRUE)
+  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size, is_train = FALSE)
   message("Finished neighborhood averaging")
 
-  model <- model.train(avg_train_matrix, train_labels, model, seed = seed, n_tree = n_tree, kernel = kernel)
 
-  results <- model.predict(model, avg_test_matrix, test_labels)
+  STEAM.obj <- model.train(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, trainval.ratio, train.folder.name, allowParallel)
+  message("Finished Model training")
 
-  return(results)
+  STEAM.obj <- model.predict(STEAM.obj)
+  message("Finished Evaluation")
+
+  return(STEAM.obj)
 }
 
