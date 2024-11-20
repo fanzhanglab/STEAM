@@ -15,7 +15,9 @@ BugReports: https://github.com/fanzhanglab/STEAM/issues
 Depends: 
     R (>= 4.0),
     ggplot2 (>= 3.4),
-    caret
+    caret,
+    randomForest,
+    e1071
 Suggests: knitr,
     rmarkdown,
     ggpointdensity
