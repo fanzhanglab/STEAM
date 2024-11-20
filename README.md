@@ -1,12 +1,13 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
 
-# STEAM <img width="28%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
+</br> </br> </br> </br> </br> </br> </br>
 
-[![R-CMD-check](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml)
-![](https://komarev.com/ghpvc/?username=fanzhanglab&style=flat-square&color=green)
+# STEAM
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml)
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM&label=%23Visits&labelColor=%23000000&countColor=%2337d67a&style=plastic)
 <!-- badges: end -->
 <p align="justify">
 We introduce STEAM, ……
@@ -38,7 +39,9 @@ remotes::install_github("fanzhanglab/STEAM")
 
 - R (\>= 4.2)
 - ggplot2 (\>= 3.4.2)
-- caret <br/>
+- caret
+- randomForest
+- e1071 <br/>
 
 ## Tutorials
 
@@ -54,20 +57,16 @@ Data (DLPFC):
 
 ``` r
 # Create a new STEAM object for the loaded spatial transcriptomic data
-STEAM = STEAM_Obj(count = dlpfc$count_exp,
-                  spatial = dlpfc$spatial)
+STEAM.Obj <- LoadSTEAM(count_exp = matrix, spatial = coordinates, labels = labels, Seurat.obj = NULL)
 ```
 
-… (skip several preprocessing steps) …
-
 ``` r
-
-STEAM <- RunSTEAM(x = STEAM$exp_adj_matrix, z = STEAM$adj_matrix, obj = STEAM, nperms=50, niter=3)
+STEAM.Obj <- RunSTEAM(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE)
 ```
 
 <br/>
 
-#### Benchmarcking STEAM:
+#### STEAM Metrics:
 
 <!-- <img width="85%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/media/ARI_DLPFC.png"> -->
 
@@ -75,7 +74,8 @@ STEAM <- RunSTEAM(x = STEAM$exp_adj_matrix, z = STEAM$adj_matrix, obj = STEAM, n
 
 ## Citations
 
-<!-- Guo, N., Vargas, J., Fritz, D., Krishna, R., Zhang, F. Uncover spatially informed shared variations underlying single-cell spatial transcriptomics with STEAM, [*bioRxiv*](link), 2023 -->
+Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM,
+[*bioRxiv*](link), 2023
 
 <br/>
 
