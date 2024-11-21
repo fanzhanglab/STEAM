@@ -23,15 +23,15 @@
 #' @export
 RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE) {
   set.seed(seed)
-  STEAM.obj <- data.split(STEAM.obj, train.ratio)
+  STEAM.obj <- data.split(STEAM.obj, train.ratio = train.ratio)
   message("Finished Data Splitting")
 
-  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size, is_train = TRUE)
-  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size, is_train = FALSE)
+  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = TRUE)
+  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = FALSE)
   message("Finished neighborhood averaging")
 
 
-  STEAM.obj <- model.train(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, trainval.ratio, train.folder.name, allowParallel)
+  STEAM.obj <- model.train(STEAM.obj, model, n.tree = n.tree, kernel = kernel, cv.folds = cv.folds, cv.repeats = cv.repeats, trainval.ratio = trainval.ratio, train.folder.name = train.folder.name, allowParallel = allowParallel)
   message("Finished Model training")
 
   STEAM.obj <- model.predict(STEAM.obj)

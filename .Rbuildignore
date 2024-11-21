@@ -3,5 +3,5 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 
-
+^\.data$
 ^\.github$

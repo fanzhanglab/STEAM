@@ -1,13 +1,13 @@
 model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, trainval.ratio, train.folder.name, allowParallel) {
 
   # Prepare the data frame
-  df <- data.frame(labels = STEAM.obj@train$train.data.labels, t(STEAM.obj@train$avg.matrix))
+  df <- data.frame(labels = STEAM.obj$train$train.data.labels, t(STEAM.obj$train$avg.matrix))
   df$labels <- factor(df$labels)
   for (i in 2:ncol(df)) {
     df[, i] <- as.numeric(df[, i])
   }
 
-  train_control <- trainControl(method = "repeatedcv", number = cv_folds, repeats = cv.repeats, savePredictions = "all", classProbs = TRUE, p = trainval.ratio, search = 'grid', allowParallel = allowParallel)
+  train_control <- trainControl(method = "repeatedcv", number = cv.folds, repeats = cv.repeats, savePredictions = "all", classProbs = TRUE, p = trainval.ratio, search = 'grid', allowParallel = allowParallel)
 
   if (model == "rf") {
 
@@ -50,7 +50,7 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
 
 
   saveRDS(train_model, file = file.path(train.folder.name, "train.model.rds"))
-  STEAM.obj@train$model <- train_model
+  STEAM.obj$train$model <- train_model
 
   # Return Model and Metrics
   return(STEAM.obj)
