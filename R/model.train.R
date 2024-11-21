@@ -17,25 +17,25 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
   } else if (model == "svm" & kernel == 'radial') {
     # SVM model with cross-validation
     train_model <- train(labels ~ ., data = df, method = "svmRadial", trControl = train_control, metric = 'Kappa')
-    message("Finished SVM model building with cross-validation")
+    message("Finished SVM-Radial model building with cross-validation")
 
 
   } else if (model == "svm" & kernel == 'linear') {
     # SVM model with cross-validation
     train_model <- train(labels ~ ., data = df, method = "svmLinear", trControl = train_control, metric = 'Kappa')
-    message("Finished SVM model building with cross-validation")
+    message("Finished SVM-Linear model building with cross-validation")
 
 
   } else if (model == "xgb") {
     # SVM model with cross-validation
-    train_model <- train(labels ~ ., data = df, method = "xgbtree", trControl = train_control, metric = 'Kappa')
-    message("Finished SVM model building with cross-validation")
+    train_model <- train(labels ~ ., data = df, method = "xgbTree", trControl = train_control, metric = 'Kappa')
+    message("Finished Xgboost model building with cross-validation")
 
 
   } else if (model == "multinom") {
     # SVM model with cross-validation
     train_model <- train(labels ~ ., data = df, method = "multinom", trControl = train_control, metric = 'Kappa')
-    message("Finished SVM model building with cross-validation")
+    message("Finished Multinomial model building with cross-validation")
 
 
   } else {
