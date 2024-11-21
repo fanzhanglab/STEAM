@@ -1,12 +1,12 @@
 model.predict <- function(STEAM.obj) {
-  df <- data.frame(labels = STEAM.obj@test$test.data.labels, t(STEAM.obj@test$avg.matrix))
+  df <- data.frame(labels = STEAM.obj$test$test.data.labels, t(STEAM.obj$test$avg.matrix))
   df$labels <- factor(df$labels)
 
   for (i in 2:ncol(df)) {
     df[, i] <- as.numeric(df[, i])
   }
 
-  p <- predict(STEAM.obj@train$model, df)
+  p <- predict(STEAM.obj$train$model, df)
   p <- factor(p, levels = levels(df$labels))
 
   confusion_matrix <- table(Predicted = p, Actual = df$labels)
@@ -26,9 +26,9 @@ model.predict <- function(STEAM.obj) {
     f1_score = f1_score,
     confusion_matrix = confusion_matrix
   )
-  STEAM.obj@test$predictions <- p
-  STEAM.obj@test$true.labels <- df$labels
-  STEAM.obj@test$metrics <- metrics
+  STEAM.obj$test$predictions <- p
+  STEAM.obj$test$true.labels <- df$labels
+  STEAM.obj$test$metrics <- metrics
 
 
   return(STEAM.obj)
