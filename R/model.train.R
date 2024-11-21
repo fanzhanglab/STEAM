@@ -20,7 +20,7 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
     message("Finished SVM model building with cross-validation")
 
 
-  } else if (model == "svm" & kernel == 'radial') {
+  } else if (model == "svm" & kernel == 'linear') {
     # SVM model with cross-validation
     train_model <- train(labels ~ ., data = df, method = "svmLinear", trControl = train_control, metric = 'Kappa')
     message("Finished SVM model building with cross-validation")
@@ -39,7 +39,7 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
 
 
   } else {
-    stop("Model type is not supported. Please choose 'rf', 'svm'.")
+    stop("Model type is not supported. Please choose 'rf', 'svm', 'xgb', or 'multinom'.")
   }
 
 
