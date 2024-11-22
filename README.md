@@ -22,11 +22,13 @@ proximity and gene expression covarying patterns.
 
 STEAM incorporates various machine learning models, including Random
 Forest, XGBoost, and SVM, to assess the prediction accuracy and
-consistency of clusters. We demonstrated the capability of STEAM on
-multi-cell and single-cell resolution spatial transcriptomics and
-proteomics. Furthermore, we used STEAM to evaluate the performance of
-spatial-aware and spatial-ignorant clustering methods, offering
-researchers a valuable tool for more informed result interpretation.
+consistency of clusters, along with statistical metrics like Kappa
+score, F1 score, ARI (Adjusted Rand Index), etc. We demonstrated the
+capability of STEAM on multi-cell and single-cell resolution spatial
+transcriptomics and proteomics. Furthermore, we used STEAM to evaluate
+the performance of spatial-aware and spatial-ignorant clustering
+methods, offering researchers a valuable tool for more informed result
+interpretation.
 </p>
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
 
