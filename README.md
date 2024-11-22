@@ -20,14 +20,13 @@ within a cluster should enable accurate prediction of cell type
 annotations for the remaining cells within that cluster, due to spatial
 proximity and gene expression covarying patterns.
 
-STEAM incorporates various machine learning models, including random
-forest, XGBoost, and SVM, to assess the prediction accuracy and
+STEAM incorporates various machine learning models, including Random
+Forest, XGBoost, and SVM, to assess the prediction accuracy and
 consistency of clusters. We demonstrated the capability of STEAM on
 multi-cell and single-cell resolution spatial transcriptomics and
 proteomics. Furthermore, we used STEAM to evaluate the performance of
 spatial-aware and spatial-ignorant clustering methods, offering
 researchers a valuable tool for more informed result interpretation.
-
 </p>
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
 
@@ -67,8 +66,6 @@ Data (DLPFC):
 
 - <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html">
   Tutorial of applying STEAM on DLPFC data </a>
-
-<br/>
 
 #### Below are several major steps of running STEAM:
 
