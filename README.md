@@ -8,25 +8,25 @@
 <!-- badges: end -->
 <p align="justify">
 
-We introduce STEAM, a Spatial Transcriptomics Evaluation Algorithm and
-Metric for clustering performance, an user-friendly strategy designed to
-evaluate the consistency of clustering algorithms and the reliability of
-cell annotations in spatial omics data. Our hypothesis is that if
-clusters are robust and consistent across tissue regions, selecting a
-subset of cells or spots within a cluster should enable accurate
-prediction of cell type annotations for the remaining cells within that
-cluster, due to spatial proximity and gene expression covarying
-patterns. STEAM incorporates various machine learning models to assess
-the prediction accuracy and consistency of clusters. We demonstrated the
-generalizability and scalability of STEAM across various spatial omics
-platforms, spanning multi-cell to single-cell resolution, as well as
-spatial transcriptomics and proteomics. Furthermore, we used STEAM to
-evaluate the performance of spatial-aware and spatial-ignorant
-clustering methods, offering researchers a valuable tool for more
-informed result interpretation to guide toward biologically robust
-results.
+One common challenge in evaluating the robustness of identified cell
+type clusters in spatial omics is the lack of ground truth cell type
+labels in real-world data from disease conditions. To address this, we
+introduce STEAM, a Spatial Transcriptomics Evaluation Algorithm and
+Metric for clustering performance, developed to evaluate the consistency
+of clustering algorithms and the reliability of cell annotations in
+spatial omics data. Our hypothesis is that if clusters are robust and
+consistent across tissue regions, selecting a subset of cells or spots
+within a cluster should enable accurate prediction of cell type
+annotations for the remaining cells within that cluster, due to spatial
+proximity and gene expression covarying patterns.
 
-</br> </br>
+STEAM incorporates various machine learning models, including random
+forest, XGBoost, and SVM, to assess the prediction accuracy and
+consistency of clusters. We demonstrated the capability of STEAM on
+multi-cell and single-cell resolution spatial transcriptomics and
+proteomics. Furthermore, we used STEAM to evaluate the performance of
+spatial-aware and spatial-ignorant clustering methods, offering
+researchers a valuable tool for more informed result interpretation.
 
 </p>
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
@@ -81,14 +81,13 @@ STEAM.Obj <- LoadSTEAM(count_exp = matrix, spatial = coordinates, labels = label
 STEAM.Obj <- RunSTEAM(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE)
 ```
 
-<br/>  
 <br/>
 
 ## Citations
 
 Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM: Spatial
 Transcriptomics Evaluation Algorithm and Metric for clustering
-performance, [*bioRxiv*](link), 2023
+performance, [*bioRxiv*](link), 2024
 
 <br/>
 
@@ -96,8 +95,7 @@ performance, [*bioRxiv*](link), 2023
 
 Using github [**issues**](https://github.com/fanzhanglab/STEAM/issues)
 section, if you have any question, comments, suggestions, or to report
-coding related issues of STEAM is highly encouranged than sending
-emails.
+coding related issues of STEAM is highly encouraged than sending emails.
 
 - Please **check the GitHub
   [issues](https://github.com/fanzhanglab/STEAM/issues)** for similar
