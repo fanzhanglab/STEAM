@@ -1,3 +1,5 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
     branches: [main, master]
@@ -28,20 +30,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Update Homebrew (macOS only)
-        if: matrix.config.os == 'macos-latest'
-        run: brew update
-
-      - name: Install qpdf (macOS only)
-        if: matrix.config.os == 'macos-latest'
-        run: brew install qpdf
-
-      - name: Debug macOS Environment
-        if: matrix.config.os == 'macos-latest'
-        run: |
-          brew doctor
-          brew list
 
       - uses: r-lib/actions/setup-pandoc@v2
 

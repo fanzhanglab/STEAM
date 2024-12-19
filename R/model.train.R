@@ -2,7 +2,7 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
 
   # Prepare the data frame
   df <- data.frame(labels = STEAM.obj$train$train.data.labels, t(STEAM.obj$train$avg.matrix))
-  df$labels <- factor(df$labels)
+  df$labels <- factor(df$labels, levels = unique(df$labels), labels = make.names(unique(df$labels)))
   for (i in 2:ncol(df)) {
     df[, i] <- as.numeric(df[, i])
   }

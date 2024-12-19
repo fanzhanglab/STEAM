@@ -55,11 +55,15 @@ remotes::install_github("fanzhanglab/STEAM")
 
 ### Dependencies / Other required packages
 
+``` r
 - R (\>= 4.2)
 - ggplot2 (\>= 3.4.2)
 - caret
 - randomForest
-- e1071 <br/>
+- e1071
+```
+
+<br/>
 
 ## Tutorials
 
