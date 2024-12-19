@@ -21,16 +21,9 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 <p align = "justify">
 
-We introduce STEAM, ......
+One common challenge in evaluating the robustness of identified cell type clusters in spatial omics is the lack of ground truth cell type labels in real-world data from disease conditions. To address this, we introduce STEAM, a Spatial Transcriptomics Evaluation Algorithm and Metric for clustering performance, developed to evaluate the consistency of clustering algorithms and the reliability of cell annotations in spatial omics data. Our hypothesis is that if clusters are robust and consistent across tissue regions, selecting a subset of cells or spots within a cluster should enable  accurate prediction of cell type annotations for the remaining cells within that cluster, due to spatial proximity and gene expression covarying patterns. 
 
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-
+STEAM incorporates various machine learning models, including Random Forest, XGBoost, and SVM, to assess the prediction accuracy and consistency of clusters, along with statistical metrics like Kappa score, F1 score, ARI (Adjusted Rand Index), etc. We demonstrated the capability of STEAM on multi-cell and single-cell resolution spatial transcriptomics and proteomics. Furthermore, we used STEAM to evaluate the performance of spatial-aware and spatial-ignorant clustering methods, offering researchers a valuable tool for more informed result interpretation. 
 </p>
 
 
@@ -73,8 +66,6 @@ remotes::install_github("fanzhanglab/STEAM")
 - <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html"> Tutorial of applying STEAM on DLPFC data </a>
 
 
-<br/>
-
 #### Below are several major steps of running STEAM:
 
 ``` r
@@ -87,20 +78,11 @@ STEAM.Obj <- RunSTEAM(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.f
 
 ```
 
-
-<br/>
-
-
-#### STEAM Metrics:
-
-<!-- <img width="85%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/media/ARI_DLPFC.png"> -->
-
-
 <br/>
 
 ## Citations
 
-Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM, [*bioRxiv*](link), 2023
+Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM: Spatial Transcriptomics Evaluation Algorithm and Metric for clustering performance, [*bioRxiv*](link), 2024
 
 <br/>
 
@@ -108,7 +90,7 @@ Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM, [*bioRxiv*](link), 202
 
 Using github [**issues**](https://github.com/fanzhanglab/STEAM/issues)
 section, if you have any question, comments, suggestions, or to report
-coding related issues of STEAM is highly encouranged than sending
+coding related issues of STEAM is highly encouraged than sending
 emails.
 
 - Please **check the GitHub
