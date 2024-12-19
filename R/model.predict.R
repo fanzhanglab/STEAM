@@ -1,6 +1,6 @@
 model.predict <- function(STEAM.obj) {
   df <- data.frame(labels = STEAM.obj$test$test.data.labels, t(STEAM.obj$test$avg.matrix))
-  df$labels <- factor(df$labels)
+  df$labels <- factor(df$labels, levels = unique(df$labels), labels = make.names(unique(df$labels)))
 
   for (i in 2:ncol(df)) {
     df[, i] <- as.numeric(df[, i])
