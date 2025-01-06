@@ -1,3 +1,10 @@
+#' Feature Importance
+#'
+#' @param STEAM.obj STEAM Object
+#' @param top_n Top n
+#' @param title title
+#'
+#' @export
 feature_importance <- function(STEAM.obj, top_n = 10, title = "Top Features by Importance") {
 
   # Validate input
@@ -45,8 +52,6 @@ feature_importance <- function(STEAM.obj, top_n = 10, title = "Top Features by I
   importance <- sort(importance, decreasing = TRUE)
   top_features <- head(importance, top_n)
 
-  # Plot Feature Importance
-  library(ggplot2)
   p <- ggplot(data.frame(Feature = names(top_features), Importance = top_features),
               aes(x = reorder(Feature, Importance), y = Importance)) +
     geom_bar(stat = "identity", fill = "steelblue") +

@@ -2,6 +2,9 @@
 
 export(LoadSTEAM)
 export(RunSTEAM)
+export(feature_expression)
+export(feature_importance)
+export(plot_misclassified_cells)
 import(caret)
 import(e1071)
 import(randomForest)

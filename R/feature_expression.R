@@ -1,3 +1,10 @@
+#' Feature Expression
+#'
+#' @param steam_obj STEAM Obj
+#' @param feature_name Feature Name
+#' @param title title
+#'
+#' @export
 feature_expression <- function(steam_obj, feature_name, title = "Expression Across Layers") {
   feature_expression <- data.frame(
     Layer = steam_obj$test$test.data.labels,
@@ -13,5 +20,3 @@ feature_expression <- function(steam_obj, feature_name, title = "Expression Acro
     ) +
     theme_minimal()
 }
-
-feature_expression(STEAM.obj, "MBP", title = "Expression of MBP Across Layers")

@@ -76,5 +76,3 @@ plot_misclassified_cells <- function(steam_obj, coordinates = NULL) {
       axis.title = element_blank()
     )
 }
-
-plot_misclassified_cells(STEAM.obj)
