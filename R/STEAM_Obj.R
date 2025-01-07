@@ -16,7 +16,10 @@ LoadSTEAM <- function(count_exp = NULL, spatial = NULL, labels = NULL, Seurat.ob
     # Use provided inputs directly
     STEAM.obj$count_exp <- count_exp
     STEAM.obj$spatial <- spatial
+    replace_with_layers <- function(x) { paste0("Layer_", x) }
+    labels <- sapply(labels, replace_with_layers)
     STEAM.obj$labels <- labels
+
   } else {
     # Extract data from the Seurat object
     STEAM.obj$count_exp <- Seurat.obj@assays$SCT@scale.data
