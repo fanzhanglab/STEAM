@@ -39,7 +39,7 @@ model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, 
     train_model <- train(labels ~ ., data = df, method = "multinom", MaxNWts = maxnweights, trControl = train_control, metric = 'Kappa')
     message("Finished Multinomial model building with cross-validation")
     
-  } else {
+  } else { 
     stop("Model type is not supported. Please choose 'rf', 'svm', 'xgb', or 'multinom'.")
   }
   
