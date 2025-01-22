@@ -12,6 +12,7 @@ export(plot_misclassified_cells)
 import(caret)
 import(e1071)
 import(randomForest)
+<<<<<<< HEAD
 importFrom(caret,confusionMatrix)
 importFrom(caret,createDataPartition)
 importFrom(caret,train)
@@ -26,3 +27,8 @@ importFrom(ggplot2,theme)
 importFrom(ggplot2,theme_minimal)
 importFrom(mclust,adjustedRandIndex)
 importFrom(scales,hue_pal)
+=======
+import(Seurat)
+import(scales)
+import(mclust)
+>>>>>>> 3d876744495645c292e657c4fe7021c2bf8ff990
