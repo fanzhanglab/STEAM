@@ -18,7 +18,8 @@ Depends:
     caret,
     randomForest,
     e1071,
-    scales
+    scales,
+    Seurat
 Suggests: knitr,
     rmarkdown,
     ggpointdensity
