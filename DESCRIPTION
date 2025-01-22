@@ -17,7 +17,10 @@ Depends:
     ggplot2 (>= 3.4),
     caret,
     randomForest,
-    e1071
+    e1071,
+    Seurat,
+    scales,
+    mclust
 Suggests: knitr,
     rmarkdown,
     ggpointdensity
