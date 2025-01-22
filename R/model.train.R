@@ -1,3 +1,20 @@
+#' Train a Classification Model
+#'
+#' This function trains a classification model (e.g., Random Forest, SVM, XGBoost, or Multinomial Logistic Regression) 
+#' using the training data in a STEAM object. It performs repeated cross-validation and saves the trained model to a specified folder.
+#'
+#' @param STEAM.obj Object of class STEAM.Object
+#' @param model A string specifying the model type. Options are \code{"rf"} (Random Forest), \code{"svm"} (Support Vector Machine), \code{"xgb"} (XGBoost), or \code{"multinom"} (Multinomial Logistic Regression).
+#' @param n.tree Number of trees to use if \code{model = "rf"}.
+#' @param kernel Kernel type for SVM. Options are \code{"radial"} or \code{"linear"}.
+#' @param cv.folds Number of folds for cross-validation.
+#' @param cv.repeats Number of repetitions for repeated cross-validation.
+#' @param trainval.ratio Proportion of training data used for training in cross-validation.
+#' @param train.folder.name Folder name where the trained model will be saved.
+#' @param allowParallel Logical. If \code{TRUE}, allows parallel processing during model training.
+#' @param maxnweights Maximum number of weights for multinomial logistic regression. Default is 5000.
+#' @importFrom caret train trainControl
+#' @export
 model.train <- function(STEAM.obj, model, n.tree, kernel, cv.folds, cv.repeats, trainval.ratio, train.folder.name, allowParallel, maxnweights = 5000) {
   
   # Prepare the data frame

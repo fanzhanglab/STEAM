@@ -1,3 +1,11 @@
+#' Predict Labels and Evaluate Model Performance
+#'
+#' This function takes a STEAM object, predicts labels for the test dataset using the trained model, and calculates performance metrics, including accuracy, precision, recall, F1-score, mean balanced accuracy, Adjusted Rand Index (ARI), and Kappa.
+#'
+#' @param Object of class STEAM.Object
+#' @importFrom mclust adjustedRandIndex
+#' @importFrom caret confusionMatrix
+#' @export
 model.predict <- function(STEAM.obj) {
   # Extract test data and model from STEAM.obj
   test_matrix <- STEAM.obj$test$avg.matrix

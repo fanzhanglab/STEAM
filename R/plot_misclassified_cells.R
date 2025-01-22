@@ -2,7 +2,8 @@
 #'
 #' @param steam_obj STEAM Object
 #' @param coordinates coordinates
-#'
+#' @importFrom ggplot2 ggplot aes geom_point scale_color_manual labs theme_minimal theme element_blank
+#' @importFrom scales hue_pal
 #' @export
 plot_misclassified_cells <- function(steam_obj, coordinates = NULL) {
   # Predefined 7-color palette

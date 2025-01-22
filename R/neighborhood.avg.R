@@ -1,3 +1,12 @@
+#' Perform Neighborhood Averaging
+#'
+#' This function performs neighborhood averaging on the expression data in a STEAM object. 
+#' For each cell, it computes the average expression of neighboring cells within a specified spatial distance (\code{n.size}).
+#'
+#' @param STEAM.obj 
+#' @param n.size An integer specifying the neighborhood size (distance) for averaging.
+#' @param is_train A logical value indicating whether to apply neighborhood averaging on the training dataset (\code{TRUE}) or the test dataset (\code{FALSE}).
+#' @export
 neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
 
   if (is_train) {
