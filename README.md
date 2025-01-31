@@ -5,7 +5,7 @@
 
 [![R-CMD-check](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml)
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
-<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
+<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAM_logo.png">
 <!-- badges: end -->
 <p align="justify">
 
