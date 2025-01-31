@@ -1,11 +1,11 @@
 Package: STEAM
 Title: Training and Evaluating Clustering performance with STEAM
-Version: 0.7
+Version: 0.8
 Author: Samantha Reynoso, Courtney Schiebout, Revanth Krishna, Fan Zhang (University of Colorado School of Medicine  - CU Medicine)
 Maintainer: Revanth Krishna <revanth.krishna@cuanschutz.edu>
 Correspondance: Fan Zhang <fan.3.zhang@cuanschutz.edu>
 Description: .... STEAM.
-Date: 2025-01-06
+Date: 2025-01-31
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,11 +18,11 @@ Depends:
     caret,
     randomForest,
     e1071,
-    scales,
-    Seurat
+    scales
 Suggests: knitr,
     rmarkdown,
-    ggpointdensity
+    ggpointdensity,
+    Seurat
 LazyData: true
 LazyDataCompression: xz
 VignetteBuilder: knitr
