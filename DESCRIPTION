@@ -1,11 +1,11 @@
 Package: STEAM
 Title: Training and Evaluating Clustering performance with STEAM
-Version: 0.9
+Version: 1.0
 Author: Samantha Reynoso, Courtney Schiebout, Revanth Krishna, Fan Zhang (University of Colorado School of Medicine  - CU Medicine)
 Maintainer: Revanth Krishna <revanth.krishna@cuanschutz.edu>
 Correspondance: Fan Zhang <fan.3.zhang@cuanschutz.edu>
 Description: Evaluating consistency and reliability of clustering in spatial omics using STEAM
-Date: 2025-01-31
+Date: 2025-02-01
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -28,7 +28,6 @@ Imports:
   stats,
   utils,
   randomForest
-Importfrom:
 Suggests: knitr,
     rmarkdown,
     ggpointdensity,

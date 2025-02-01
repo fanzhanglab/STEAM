@@ -2,9 +2,9 @@
 #'
 #' @param STEAM.obj STEAM Object
 #'
-#' @import ggplot2
-#' @import gridExtra
-#' @import grid
+#' @importFrom ggplot2 ggplot ggplotGrob
+#' @importFrom gridExtra grid.arrange tableGrob
+#' @importFrom grid grid.draw grid.newpage
 #' @import reshape2
 #' @import viridis
 #'
