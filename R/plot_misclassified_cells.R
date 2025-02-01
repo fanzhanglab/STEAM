@@ -1,30 +1,31 @@
 #' Plotting Misclassified labels
 #'
 #' @param steam_obj STEAM Object
-#' @param coordinates coordinates
-#'
+#' @param colors list of colors for clusters
+#' @importFrom ggplot2 ggplot aes geom_point scale_color_manual labs theme_minimal theme element_blank
+#' @importFrom scales hue_pal
 #' @export
-plot_misclassified_cells <- function(steam_obj, coordinates = NULL) {
-  # Predefined 7-color palette
-  default_colors <- c(
-    "#F8766D", "#C49A00", "#53B400", "#00C094", "#00B6EB", "#A58AFF", "#FB61D7"
-  )
+plot_misclassified_cells <- function(steam_obj, colors = NULL) {
 
-  # assign colors for misclassified and base layers
-  cols <- c("Misclassified" = "black",
-            "Layer_1" = default_colors[1],
-            "Layer_2" = default_colors[2],
-            "Layer_3" = default_colors[3],
-            "Layer_4" = default_colors[4],
-            "Layer_5" = default_colors[5],
-            "Layer_6" = default_colors[6],
-            "WM"      = default_colors[7])
+  assign_layer_colors <- function(labels, colors = NULL) {
+    unique_labels <- unique(labels)
+    num_layers <- length(unique_labels)
 
-  # broader palette if more than 7 unique layers exist
-  broader_palette <- hue_pal()(30)
+    if (!is.null(colors)) {
+      layer_colors <- colors
+    } else {
+      default_colors <- rainbow(num_layers)
+      layer_colors <- setNames(default_colors, unique_labels)
+    }
 
+    layer_colors["Misclassified"] <- "black"
+
+    return(layer_colors)
+  }
+
+  cols <- assign_layer_colors(steam_obj$labels, colors)
+  coordinates <- steam_obj$spatial
   if (is.null(coordinates)) {
-    coordinates <- steam_obj$spatial
     colnames(coordinates) <- c("cell_id", "col", "row")
   } else {
     colnames(coordinates) <- c("cell_id", "col", "row")
@@ -67,12 +68,15 @@ plot_misclassified_cells <- function(steam_obj, coordinates = NULL) {
     scale_color_manual(values = cols) +
     labs(
       title = "",
-      color = "Labels"
+      color = "Layer/Label"
     ) +
-    theme_minimal() +
+    theme_classic() +
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
-      axis.title = element_blank()
+      axis.title = element_blank(),
+      axis.line = element_blank(),   # Removes axis lines
+      panel.grid = element_blank(),  # Removes grid
+      panel.border = element_blank() # Removes panel border
     )
 }

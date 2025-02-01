@@ -4,12 +4,12 @@
 \alias{plot_misclassified_cells}
 \title{Plotting Misclassified labels}
 \usage{
-plot_misclassified_cells(steam_obj, coordinates = NULL)
+plot_misclassified_cells(steam_obj, colors = NULL)
 }
 \arguments{
 \item{steam_obj}{STEAM Object}
 
-\item{coordinates}{coordinates}
+\item{colors}{list of colors for clusters}
 }
 \description{
 Plotting Misclassified labels
