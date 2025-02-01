@@ -67,6 +67,10 @@ remotes::install_github("fanzhanglab/STEAM")
 - randomForest
 - e1071
 - scales
+- gridExtra
+- grid
+- reshape2
+- viridis
 ```
 
 <br/>
@@ -76,7 +80,7 @@ remotes::install_github("fanzhanglab/STEAM")
 **Step-by-step notebook** of applying STEAM on 10X Visium Human Brain
 Data (DLPFC):
 
-- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html">
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/STEAM_DLPFC_tutorial.html">
   Tutorial of applying STEAM on DLPFC data </a>
 
 #### Below are several major steps of running STEAM:
