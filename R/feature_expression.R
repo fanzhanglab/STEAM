@@ -15,8 +15,9 @@ feature_expression <- function(steam_obj, feature_name, title = "Expression Acro
     geom_boxplot() +
     labs(
       title = title,
-      x = "Layer",
-      y = "Expression Level"
+      x = "Layer/Label",
+      y = "Expression Level",
+      fill = "Layer/Label"
     ) +
-    theme_minimal()
+    theme_classic()
 }

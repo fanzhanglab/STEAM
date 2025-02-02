@@ -54,14 +54,14 @@ feature_importance <- function(STEAM.obj, top_n = 10, title = "Top Features by I
 
   p <- ggplot(data.frame(Feature = names(top_features), Importance = top_features),
               aes(x = reorder(Feature, Importance), y = Importance)) +
-    geom_bar(stat = "identity", fill = "steelblue") +
+    geom_bar(stat = "identity", fill = "steelblue", color = "black") +  # Add black border
     coord_flip() +
     labs(
       title = title,
       x = "Feature",
       y = "Importance"
     ) +
-    theme_minimal()
+    theme_classic()
 
   print(p)
 

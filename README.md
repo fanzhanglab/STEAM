@@ -2,9 +2,12 @@
 # STEAM
 
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml)
-![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
-<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAMlogo.png">
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM-v2&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
+<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAM_logo.png">
 <!-- badges: end -->
 <p align="justify">
 
@@ -25,11 +28,13 @@ Forest, XGBoost, and SVM, to assess the prediction accuracy and
 consistency of clusters, along with statistical metrics like Kappa
 score, F1 score, ARI (Adjusted Rand Index), etc. We demonstrated the
 capability of STEAM on multi-cell and single-cell resolution spatial
-transcriptomics and proteomics. Furthermore, we used STEAM to evaluate
-the performance of spatial-aware and spatial-ignorant clustering
-methods, offering researchers a valuable tool for more informed result
-interpretation.
+transcriptomics and proteomics. **Notably, STEAM supports multi-sample
+training, enabling the evaluation of cross-replicate clustering
+consistency.** Furthermore, we used STEAM to evaluate the performance of
+spatial-aware and spatial-ignorant clustering methods, offering
+researchers a valuable tool for more informed result interpretation.
 </p>
+
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
 
 </br>
@@ -61,6 +66,11 @@ remotes::install_github("fanzhanglab/STEAM")
 - caret
 - randomForest
 - e1071
+- scales
+- gridExtra
+- grid
+- reshape2
+- viridis
 ```
 
 <br/>
@@ -70,7 +80,7 @@ remotes::install_github("fanzhanglab/STEAM")
 **Step-by-step notebook** of applying STEAM on 10X Visium Human Brain
 Data (DLPFC):
 
-- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/Tutorial_STEAM_DLPFC.html">
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/vignettes/STEAM_DLPFC_tutorial.html">
   Tutorial of applying STEAM on DLPFC data </a>
 
 #### Below are several major steps of running STEAM:
@@ -90,7 +100,7 @@ STEAM.Obj <- RunSTEAM(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.f
 
 Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM: Spatial
 Transcriptomics Evaluation Algorithm and Metric for clustering
-performance, [*bioRxiv*](link), 2024
+performance, [*bioRxiv*](link), 2025
 
 <br/>
 
