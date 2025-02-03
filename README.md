@@ -7,7 +7,7 @@
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM-v2&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
-<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAM_logo.png">
+<img width="30%" align = "right" src="https://github.com/fanzhanglab/STEAM/blob/alpha/media/STEAM_logo.png?raw=true">
 <!-- badges: end -->
 <p align="justify">
 
