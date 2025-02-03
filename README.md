@@ -8,7 +8,7 @@
 [![R-CMD-check](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/fanzhanglab/STEAM/actions/workflows/check-standard.yaml)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM-v3&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffanzhanglab%2FSTEAM-v4&label=%23Visits&labelColor=%23000000&countColor=%2300c00B&style=plastic)
 
 <!-- badges: end -->
 
@@ -38,7 +38,7 @@ spatial-aware and spatial-ignorant clustering methods, offering
 researchers a valuable tool for more informed result interpretation.
 </p>
 
-<img width="70%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/media/Figure1.png?raw=true">
+<img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/media/Figure1.png?raw=true">
 
 <!-- <img width="100%" align = "center" src="https://github.com/fanzhanglab/STEAM/blob/main/man/figures/Figure1.png"> -->
 
