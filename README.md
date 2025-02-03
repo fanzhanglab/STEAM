@@ -31,9 +31,9 @@ Forest, XGBoost, and SVM, to assess the prediction accuracy and
 consistency of clusters, along with statistical metrics like Kappa
 score, F1 score, ARI (Adjusted Rand Index), etc. We demonstrated the
 capability of STEAM on multi-cell and single-cell resolution spatial
-transcriptomics and proteomics. **Notably, STEAM supports multi-sample
+transcriptomics and proteomics. Notably, STEAM supports multi-sample
 training, enabling the evaluation of cross-replicate clustering
-consistency.** Furthermore, we used STEAM to evaluate the performance of
+consistency. Furthermore, we used STEAM to evaluate the performance of
 spatial-aware and spatial-ignorant clustering methods, offering
 researchers a valuable tool for more informed result interpretation.
 </p>
