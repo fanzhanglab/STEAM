@@ -1,36 +1,28 @@
 ---
-title: "STEAM DLPFC Tutorial"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{STEAM_DLPFC_tutorial}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "Tutorial of applying STEAM to evaluate clustering performance using the DLPFC spatial transcriptomic data"
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
+  markdown:
+    wrap: sentence
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-
-This vignette outlines the steps of performing a classification analysis on the DLPFC (Dorsolateral Prefrontal Cortex) data by 10x Genomics using the STEAM framework.
-Here, cell-type classification is performed by incorporating neighborhood averaging and RandomForest with cross validation.
+This vignette outlines the steps of applying STEAM on the 10X Visium DLPFC (Dorsolateral Prefrontal Cortex) data. Four different classification models are implemented in STEAM to evaluate clustering results, including Random Forest, Support Vector Machines, XGBoost, and Multinomial Logistic Regression. Here, cell-type classification is performed by incorporating spatial neighborhood analysis and Random Forest model with cross validation.
 
 # Load libraries
 
-```{r setup}
+```{r, message=FALSE, warning=FALSE}
 library(STEAM)
 library(Seurat)
 ```
 
 # Load data
 
-DLPFC dataset from Visium by 10X Genomics is provided within the package.
-This data is already preprocessed for your use.
+DLPFC.RDS is sample 151669 from the DLPFC dataset from Visium by 10X Genomics.
+This data is already preprocessed and includes a `SCTransform` scaled data matrix by `Seurat`, spatial coordinates, and pre-identified cluster labels
 
-```{r message=FALSE, warning=FALSE}
+```{r}
 data(DLPFC)
 ```
 
@@ -45,6 +37,7 @@ data(DLPFC)
 
 # Create a STEAM object using the LoadSTEAM function.
 STEAM.obj <- LoadSTEAM(count_exp = DLPFC$matrix, spatial = DLPFC$coordinates, labels = DLPFC$labels, Seurat.obj = NULL)
+
 ```
 
 # Run STEAM on the STEAM object using specified parameters
@@ -63,37 +56,37 @@ STEAM.obj <- LoadSTEAM(count_exp = DLPFC$matrix, spatial = DLPFC$coordinates, la
     -   `multinom` = Multinomial Logistic Regression
 -   `n.tree`: Number of trees to use for the Random Forest model.
 -   `kernel`: The kernel type for SVM.
+-   `MaxNWeights`: The maximum number of weights allowed in the neural network of the `multinom` model.
 -   `train.folder.name`: Name of the folder where training outputs will be stored ('train.out').
 -   `allowParallel`: Whether to allow parallel computing for faster execution. Set to FALSE to run sequentially.
 
 ```{r}
 
 # Run the STEAM analysis.
-STEAM.obj <- RunSTEAM(STEAM.obj,
-                      train.ratio = 0.8, 
-                      n.size = 5, 
-                      seed = 123, 
-                      cv.folds = 10, 
-                      cv.repeats = 3, 
-                      trainval.ratio = 0.8, 
-                      model = "rf", 
-                      n.tree = 100, 
-                      kernel = NULL, 
-                      train.folder.name = 'train.out', 
-                      allowParallel = TRUE
+
+STEAM.obj <- RunSTEAM(
+  STEAM.obj,
+  train.ratio = 0.8, 
+  n.size = 5, 
+  seed = 123, 
+  cv.folds = 10, 
+  cv.repeats = 3, 
+  trainval.ratio = 0.8, 
+  model = "rf", 
+  n.tree = 100, 
+  kernel = 'linear', 
+  train.folder.name = 'train.out', 
+  allowParallel = TRUE
 )
 
 ```
 
+# View the Performance Metrics from STEAM
+
 ```{r}
 # Evaluation metrics by generating Kappa, F1-score, Accuracy, etc.
-STEAM.obj$test$metrics
-
-```
-
-
-```{r fig.width=8, fig.height=6, out.width="100%"}
 ViewMetrics(STEAM.obj)
+
 ```
 
 # View the Feature Importance
@@ -102,23 +95,23 @@ feature_importance is calculated depending on the type of model used in STEAM.ob
 A brief overview of how feature importance for each model is calculated:
 
 -   `rf`: using varImp() from the `caret` package, the importance scores are extracted and feature importance is calculated as the mean decrease in Gini.
--   `xgb`: this also uses varImp() from the `caret` package and computes importance using Gain, which represents the average improvement in the loss function when a feature is used in a split. 
--   `svm`: the final model is extracted and computes thefeature importance using the absolute magnitude of the weight for each feature. Feature weights are calculated from the dot product of SVM coefficients and the support vector matrix. 
--`multinom`: the coefficient matrix is extracted, containing the feature coefficients for each class. The feature importance is calculated as the sum of absolute coefficient values across all classes. The intercept term is omitted.
+-   `xgb`: this also uses varImp() from the `caret` package and computes importance using Gain, which represents the average improvement in the loss function when a feature is used in a split.
+-   `svm`: the final model is extracted and computes the feature importance using the absolute magnitude of the weight for each feature. Feature weights are calculated from the dot product of SVM coefficients and the support vector matrix.
+-   `multinom`: the coefficient matrix is extracted, containing the feature coefficients for each class. The feature importance is calculated as the sum of absolute coefficient values across all classes. The intercept term is omitted.
 
-```{r, fig.align = "center", fig.width=5, fig.height=6}
+```{r, fig.align = "center"}
 # View feature importance
-feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
+STEAM:::feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
 
 ```
 
-# View the Gene Expression per Layer
+# View Gene Expression Distribution across Clusters
 
 The feature_expression function extracts the expression values for the user-specified feature across the different layers and plots how the expression varies across layers.
 
-```{r, fig.align = "center", fig.width=5, fig.height=4}
+```{r, fig.align = "center"}
 # Show the gene expression per layer
-feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Across Layers")
+STEAM::feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Across Layers")
 ```
 
 # View the Misclassifications
@@ -126,9 +119,9 @@ feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Acros
 The plot_misclassified_cells function extracts the spatial coordinates and labels from the STEAM.obj and compares the true labels to the model's predictions in order to identify the misclassified cells.
 Misclassifications are shown as black dots on the plot.
 
-```{r, fig.align = "center", fig.width=8, fig.height=7, out.width="70%"}
+```{r, fig.height = 8, fig.width = 10, fig.align = "center"}
 
 # Plot misclassified cells
-plot_misclassified_cells(STEAM.obj)
+STEAM::plot_misclassified_cells(STEAM.obj)
 
 ```
