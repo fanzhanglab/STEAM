@@ -16,7 +16,8 @@ RunSTEAM(
   n.tree = 500,
   kernel = "linear",
   train.folder.name = "train.out",
-  allowParallel = FALSE
+  allowParallel = FALSE,
+  maxnweights = 5000
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ RunSTEAM(
 \item{train.folder.name}{Training Output folder name}
 
 \item{allowParallel}{Boolean to perform parallel processing, if resources are available. Default is FALSE}
+
+\item{maxnweights}{Maximum allowable number of weights. Default is 5000}
 }
 \value{
 S4 Object of class 'STEAM.Object' with all outputs

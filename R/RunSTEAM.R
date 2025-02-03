@@ -13,6 +13,7 @@
 #' @param n.tree #trees (argument valid only for Random Forest). Deafult is 500
 #' @param train.folder.name Training Output folder name
 #' @param allowParallel Boolean to perform parallel processing, if resources are available. Default is FALSE
+#' @param maxnweights Maximum allowable number of weights. Default is 5000
 #'
 #' @return S4 Object of class 'STEAM.Object' with all outputs
 #'
@@ -21,7 +22,7 @@
 #'e1071
 #'
 #' @export
-RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE) {
+RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE, maxnweights = 5000) {
   set.seed(seed)
   STEAM.obj <- data.split(STEAM.obj, train.ratio = train.ratio)
   message("Finished Data Splitting")
@@ -31,7 +32,7 @@ RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.fo
   message("Finished neighborhood averaging")
 
 
-  STEAM.obj <- model.train(STEAM.obj, model, n.tree = n.tree, kernel = kernel, cv.folds = cv.folds, cv.repeats = cv.repeats, trainval.ratio = trainval.ratio, train.folder.name = train.folder.name, allowParallel = allowParallel)
+  STEAM.obj <- model.train(STEAM.obj, model, n.tree = n.tree, kernel = kernel, cv.folds = cv.folds, cv.repeats = cv.repeats, trainval.ratio = trainval.ratio, train.folder.name = train.folder.name, allowParallel = allowParallel, maxnweights)
   message("Finished Model training")
 
   STEAM.obj <- model.predict(STEAM.obj)
