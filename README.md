@@ -105,7 +105,7 @@ STEAM.Obj <- RunSTEAM(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.f
 
 Reynoso, S., Schiebout, C., Krishna, R., Zhang, F. STEAM: Spatial
 Transcriptomics Evaluation Algorithm and Metric for clustering
-performance, [*bioRxiv*](link), 2025
+performance, [*bioRxiv*](https://www.biorxiv.org/content/10.1101/2025.02.17.636505v1), 2025
 
 <br/>
 
