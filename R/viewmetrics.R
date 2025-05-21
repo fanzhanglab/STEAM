@@ -10,69 +10,76 @@
 #'
 #' @export
 ViewMetrics <- function(STEAM.obj) {
-
-  # Check if required metrics are available
   if (is.null(STEAM.obj$test$metrics)) stop("Metrics data is missing in STEAM.obj")
-
-  # Create metrics data frames
+  
+  get_metric <- function(name) {
+    if (!is.null(STEAM.obj$test$metrics[[name]])) {
+      return(STEAM.obj$test$metrics[[name]])
+    } else {
+      return(NA)
+    }
+  }
+  
+  # Create metrics data frame with scalar metrics
   metrics_data <- data.frame(
-    Accuracy = STEAM.obj$test$metrics$accuracy,
-    "Mean Balanced Accuracy" = STEAM.obj$test$metrics$mean_balanced_accuracy,
-    ARI = STEAM.obj$test$metrics$ARI,
-    Kappa = STEAM.obj$test$metrics$kappa
+    Accuracy = get_metric("accuracy"),
+    Mean_Balanced_Accuracy = get_metric("mean_balanced_accuracy"),
+    ARI = get_metric("ARI"),
+    Kappa = get_metric("kappa"),
+    NMI = get_metric("NMI"),
+    AMI = get_metric("AMI"),
+    PAS = get_metric("PAS"),
+    LISI = get_metric("LISI")
   )
-
+  
+  # Per-layer metrics
   metrics_data2 <- data.frame(
-    Layer = names(STEAM.obj$test$metric$precision),
-    Precision = STEAM.obj$test$metric$precision,
-    Recall = STEAM.obj$test$metric$recall,
-    F1_Score = STEAM.obj$test$metric$f1_score
+    Layer = names(get_metric("precision")),
+    Precision = get_metric("precision"),
+    Recall = get_metric("recall"),
+    F1_Score = get_metric("f1_score")
   )
-
-  # Create confusion matrix
-  conf_matrix <- as.matrix(STEAM.obj$test$metrics$confusion_matrix)
-  conf_df <- melt(conf_matrix)
+  
+  # Confusion matrix
+  conf_matrix <- as.matrix(get_metric("confusion_matrix"))
+  conf_df <- reshape2::melt(conf_matrix)
   colnames(conf_df) <- c("Predicted_Label", "Actual_Label", "Value")
-
-  # Compute adaptive text color for tiles
-  viridis_colors <- viridis_pal()(100)
+  
+  # Tile text color contrast
+  viridis_colors <- viridis::viridis_pal()(100)
   get_text_color <- function(value, max_value) {
     norm_value <- round((value / max_value) * 99) + 1
-    brightness <- sum(col2rgb(viridis_colors[norm_value]) * c(0.299, 0.587, 0.114))
+    brightness <- sum(grDevices::col2rgb(viridis_colors[norm_value]) * c(0.299, 0.587, 0.114))
     if (brightness > 128) "black" else "white"
   }
   max_value <- max(conf_df$Value)
   conf_df$TextColor <- sapply(conf_df$Value, get_text_color, max_value = max_value)
-
-  # Create confusion matrix plot
-  p <- ggplot(conf_df, aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
-    geom_tile() +
-    geom_text(aes(label = Value, color = TextColor), size = 6) +
-    scale_fill_viridis(option = "viridis") +
-    scale_color_identity() +
-    labs(
-      title = "Confusion Matrix",
-      x = "Actual Label",
-      y = "Predicted Label"
-    ) +
-    theme_classic() +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      axis.text = element_text(size = 12),
-      axis.title = element_text(size = 14),
-      text = element_text(size = 14)
+  
+  # Plot
+  p <- ggplot2::ggplot(conf_df, ggplot2::aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
+    ggplot2::geom_tile() +
+    ggplot2::geom_text(ggplot2::aes(label = Value, color = TextColor), size = 6) +
+    ggplot2::scale_fill_viridis_c(option = "viridis") +
+    ggplot2::scale_color_identity() +
+    ggplot2::labs(title = "Confusion Matrix", x = "Actual Label", y = "Predicted Label") +
+    ggplot2::theme_classic() +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      axis.text = ggplot2::element_text(size = 12),
+      axis.title = ggplot2::element_text(size = 14),
+      text = ggplot2::element_text(size = 14)
     )
-
-  # Arrange tables and plot
-  grid.newpage()
-  grid.arrange(
-    tableGrob(t(metrics_data)),
-    tableGrob(metrics_data2, rows = NULL),
-    ggplotGrob(p),
+  
+  # Layout
+  grid::grid.newpage()
+  gridExtra::grid.arrange(
+    gridExtra::tableGrob(t(metrics_data)),
+    gridExtra::tableGrob(metrics_data2, rows = NULL),
+    ggplot2::ggplotGrob(p),
     layout_matrix = rbind(
-      c(1, 2),  # First row: Two tables side by side
-      c(3, 3)   # Second row: Confusion matrix spanning both columns
+      c(1, 2),
+      c(3, 3)
     ),
-    heights = c(2, 3)  # Adjust heights (2 for tables, 3 for plot)
+    heights = c(2, 3)
   )
 }

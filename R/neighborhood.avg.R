@@ -1,51 +1,80 @@
-#' Perform Neighborhood Averaging
-#'
-#' This function performs neighborhood averaging on the expression data in a STEAM object. 
-#' For each cell, it computes the average expression of neighboring cells within a specified spatial distance (\code{n.size}).
-#'
-#' @param STEAM.obj 
-#' @param n.size An integer specifying the neighborhood size (distance) for averaging.
-#' @param is_train A logical value indicating whether to apply neighborhood averaging on the training dataset (\code{TRUE}) or the test dataset (\code{FALSE}).
-#' @export
 neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
-
+  
+  # Helper function to find coordinate columns
+  get_coord_columns <- function(wc) {
+    colnames_lower <- tolower(colnames(wc))
+    
+    x_candidates <- c("x", "col", "column")
+    y_candidates <- c("y", "row")
+    
+    x_col <- colnames(wc)[which(colnames_lower %in% x_candidates)]
+    y_col <- colnames(wc)[which(colnames_lower %in% y_candidates)]
+    
+    if (length(x_col) != 1 || length(y_col) != 1) {
+      stop("Could not uniquely identify x and y coordinate columns.")
+    }
+    
+    return(list(x = x_col, y = y_col))
+  }
+  
   if (is_train) {
     avg_mat <- STEAM.obj$train$train.data.matrix
-    rn <- levels(factor(STEAM.obj$train$train.data.labels))
-
+    labels <- droplevels(factor(STEAM.obj$train$train.data.labels))
+    rn <- levels(labels)
+    
+    if (length(rn) < 2) {
+      stop("Training labels contain only one class — classification not possible.")
+    }
+    
     for (i in seq_along(rn)) {
-      mat <- STEAM.obj$train$train.data.matrix[, STEAM.obj$train$train.data.labels == rn[i]]
-      wc <- STEAM.obj$train$train.data.coords[STEAM.obj$train$train.data.labels == rn[i], ]
-
+      mat <- STEAM.obj$train$train.data.matrix[, STEAM.obj$train$train.data.labels == rn[i], drop = FALSE]
+      wc <- as.data.frame(STEAM.obj$train$train.data.coords[STEAM.obj$train$train.data.labels == rn[i], ])
+      
+      coords <- get_coord_columns(wc)
+      x_col <- coords$x
+      y_col <- coords$y
+      
+      wc[[x_col]] <- as.numeric(as.character(wc[[x_col]]))
+      wc[[y_col]] <- as.numeric(as.character(wc[[y_col]]))
+      
       for (j in seq_len(ncol(mat))) {
-        roi <- wc[j, 2]
-        coi <- wc[j, 3]
-
-        neighs <- which((wc[, 2] %in% (roi - n.size):(roi + n.size)) &
-                          (wc[, 3] %in% (coi - n.size):(coi + n.size)))
-
+        roi <- wc[j, x_col]
+        coi <- wc[j, y_col]
+        
+        neighs <- which(abs(wc[[x_col]] - roi) <= n.size &
+                          abs(wc[[y_col]] - coi) <= n.size)
+        
         if (length(neighs) < 2) next
-
-        avg_mat[, colnames(mat)[j]] <- rowMeans(mat[, neighs])
+        
+        avg_mat[, colnames(mat)[j]] <- rowMeans(mat[, neighs, drop = FALSE])
       }
     }
     STEAM.obj$train$avg.matrix <- avg_mat
+    
   } else {
     avg_mat <- STEAM.obj$test$test.data.matrix
-    for (j in seq_len(ncol(STEAM.obj$test$test.data.matrix))) {
-      roi <- STEAM.obj$test$test.data.coords [j, 2]
-      coi <- STEAM.obj$test$test.data.coords [j, 3]
-
-      neighs <- which((STEAM.obj$test$test.data.coords [, 2] %in% (roi - n.size):(roi + n.size)) &
-                        (STEAM.obj$test$test.data.coords [, 3] %in% (coi - n.size):(coi + n.size)))
-
+    wc <- as.data.frame(STEAM.obj$test$test.data.coords)
+    
+    coords <- get_coord_columns(wc)
+    x_col <- coords$x
+    y_col <- coords$y
+    
+    wc[[x_col]] <- as.numeric(as.character(wc[[x_col]]))
+    wc[[y_col]] <- as.numeric(as.character(wc[[y_col]]))
+    
+    for (j in seq_len(ncol(avg_mat))) {
+      roi <- wc[j, x_col]
+      coi <- wc[j, y_col]
+      
+      neighs <- which(abs(wc[[x_col]] - roi) <= n.size &
+                        abs(wc[[y_col]] - coi) <= n.size)
+      
       if (length(neighs) < 2) next
-
-      avg_mat[, j] <- rowMeans(STEAM.obj$test$test.data.matrix[, neighs])
+      
+      avg_mat[, j] <- rowMeans(STEAM.obj$test$test.data.matrix[, neighs, drop = FALSE])
     }
     STEAM.obj$test$avg.matrix <- avg_mat
   }
-
-
+  
   return(STEAM.obj)
 }
