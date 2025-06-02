@@ -1,14 +1,3 @@
-#' View Metrics visualizations
-#'
-#' @param STEAM.obj STEAM Object
-#'
-#' @importFrom ggplot2 ggplot ggplotGrob
-#' @importFrom gridExtra grid.arrange tableGrob
-#' @importFrom grid grid.draw grid.newpage
-#' @import reshape2
-#' @import viridis
-#'
-#' @export
 ViewMetrics <- function(STEAM.obj) {
   if (is.null(STEAM.obj$test$metrics)) stop("Metrics data is missing in STEAM.obj")
   
@@ -20,19 +9,20 @@ ViewMetrics <- function(STEAM.obj) {
     }
   }
   
-  # Create metrics data frame with scalar metrics
+  # Pull training accuracy if available
+  train_acc <- if (!is.null(STEAM.obj$train$model$results$Accuracy)) round(STEAM.obj$train$model$results$Accuracy, 3) else NA
+  
   metrics_data <- data.frame(
-    Accuracy = get_metric("accuracy"),
+    Train_Accuracy = train_acc,
+    Test_Accuracy = get_metric("accuracy"),
     Mean_Balanced_Accuracy = get_metric("mean_balanced_accuracy"),
     ARI = get_metric("ARI"),
     Kappa = get_metric("kappa"),
     NMI = get_metric("NMI"),
     AMI = get_metric("AMI"),
-    PAS = get_metric("PAS"),
-    LISI = get_metric("LISI")
+    PAS = get_metric("PAS")
   )
   
-  # Per-layer metrics
   metrics_data2 <- data.frame(
     Layer = names(get_metric("precision")),
     Precision = get_metric("precision"),
@@ -40,12 +30,11 @@ ViewMetrics <- function(STEAM.obj) {
     F1_Score = get_metric("f1_score")
   )
   
-  # Confusion matrix
+  # Confusion Matrix Plot
   conf_matrix <- as.matrix(get_metric("confusion_matrix"))
   conf_df <- reshape2::melt(conf_matrix)
   colnames(conf_df) <- c("Predicted_Label", "Actual_Label", "Value")
   
-  # Tile text color contrast
   viridis_colors <- viridis::viridis_pal()(100)
   get_text_color <- function(value, max_value) {
     norm_value <- round((value / max_value) * 99) + 1
@@ -55,8 +44,7 @@ ViewMetrics <- function(STEAM.obj) {
   max_value <- max(conf_df$Value)
   conf_df$TextColor <- sapply(conf_df$Value, get_text_color, max_value = max_value)
   
-  # Plot
-  p <- ggplot2::ggplot(conf_df, ggplot2::aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
+  p_conf <- ggplot2::ggplot(conf_df, ggplot2::aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
     ggplot2::geom_tile() +
     ggplot2::geom_text(ggplot2::aes(label = Value, color = TextColor), size = 6) +
     ggplot2::scale_fill_viridis_c(option = "viridis") +
@@ -70,12 +58,12 @@ ViewMetrics <- function(STEAM.obj) {
       text = ggplot2::element_text(size = 14)
     )
   
-  # Layout
+  # Final grid without silhouette plot
   grid::grid.newpage()
   gridExtra::grid.arrange(
     gridExtra::tableGrob(t(metrics_data)),
     gridExtra::tableGrob(metrics_data2, rows = NULL),
-    ggplot2::ggplotGrob(p),
+    ggplot2::ggplotGrob(p_conf),
     layout_matrix = rbind(
       c(1, 2),
       c(3, 3)

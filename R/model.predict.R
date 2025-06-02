@@ -1,4 +1,4 @@
-model.predict <- function(STEAM.obj) {
+model.predict <- function(STEAM.obj, saved.folder = "./") {
   # Extract test data and model
   test_matrix <- STEAM.obj$test$avg.matrix
   test_labels <- STEAM.obj$test$test.data.labels
@@ -56,12 +56,6 @@ model.predict <- function(STEAM.obj) {
   }
   pas_result <- compute_PAS(STEAM.obj$test$test.data.coords, pred_labels)
   
-  # Compute LISI
-  coords <- as.data.frame(STEAM.obj$test$test.data.coords)
-  metadata <- data.frame(cluster = pred_labels)
-  rownames(metadata) <- rownames(coords)
-  lisi_score <- mean(lisi::compute_lisi(coords, metadata, label_colnames = "cluster")$cluster)
-  
   # Compile results
   metrics <- list(
     accuracy = round(accuracy, 3),
@@ -74,11 +68,10 @@ model.predict <- function(STEAM.obj) {
     NMI = round(nmi, 3),
     AMI = round(ami, 3),
     kappa = round(as.numeric(kappa), 3),
-    PAS = pas_result$score,
-    LISI = round(lisi_score, 3)
+    PAS = pas_result$score
   )
   
-  # Store in STEAM.obj
+  # Final storage
   STEAM.obj$test$predictions <- p
   STEAM.obj$test$true.labels <- df$labels
   STEAM.obj$test$metrics <- metrics
