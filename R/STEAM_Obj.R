@@ -85,3 +85,4 @@ LoadSTEAM <- function(count_exp = NULL, spatial = NULL, labels = NULL,
   class(STEAM.obj) <- "STEAM.Object"
   return(STEAM.obj)
 }
+

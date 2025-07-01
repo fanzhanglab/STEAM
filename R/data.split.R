@@ -29,3 +29,4 @@ data.split <- function(STEAM.obj, train.ratio) {
   
   return(STEAM.obj)
 }
+

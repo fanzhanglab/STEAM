@@ -75,3 +75,4 @@ plot_misclassified_cells <- function(steam_obj, label_colors = NULL) {
       panel.border = element_blank()
     )
 }
+

@@ -71,3 +71,4 @@ ViewMetrics <- function(STEAM.obj) {
     heights = c(2, 3)
   )
 }
+
