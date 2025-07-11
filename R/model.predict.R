@@ -1,3 +1,4 @@
+library(FNN)
 model.predict <- function(STEAM.obj, saved.folder = "./") {
   # Extract test data and model
   test_matrix <- STEAM.obj$test$avg.matrix
@@ -46,7 +47,7 @@ model.predict <- function(STEAM.obj, saved.folder = "./") {
   compute_PAS <- function(coords, labels, k = 10, threshold = 6) {
     coords <- as.matrix(coords)
     labels <- as.character(labels)
-    knn_result <- get.knn(coords, k = k)
+    knn_result <- FNN::get.knn(coords, k = k)
     neighbors_idx <- knn_result$nn.index
     abnormal_flags <- sapply(seq_len(nrow(coords)), function(i) {
       neighbor_labels <- labels[neighbors_idx[i, ]]
