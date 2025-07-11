@@ -4,7 +4,17 @@
 \alias{LoadSTEAM}
 \title{STEAM object - Loading data for STEAM}
 \usage{
-LoadSTEAM(count_exp = NULL, spatial = NULL, labels = NULL, Seurat.obj = NULL)
+LoadSTEAM(
+  count_exp = NULL,
+  spatial = NULL,
+  labels = NULL,
+  pca = NULL,
+  umap = NULL,
+  clusters = NULL,
+  Seurat.obj = NULL,
+  label.column = NULL,
+  assay = "SCT"
+)
 }
 \arguments{
 \item{count_exp}{Count matrix/ Gene expression data}
@@ -13,7 +23,17 @@ LoadSTEAM(count_exp = NULL, spatial = NULL, labels = NULL, Seurat.obj = NULL)
 
 \item{labels}{Cluster info/annotations}
 
+\item{pca}{PC embeddings (if using Seurat.obj)}
+
+\item{umap}{UMAP embeddings (if using Seurat.obj)}
+
+\item{clusters}{cluster labels (if using Seurat.obj)}
+
 \item{Seurat.obj}{SEURAT Obj}
+
+\item{label.column}{cluster labels}
+
+\item{assay}{assay name (if using Seurat.obj)}
 }
 \value{
 Object of class 'STEAM.Object'

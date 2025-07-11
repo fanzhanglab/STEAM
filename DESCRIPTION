@@ -1,6 +1,6 @@
 Package: STEAM
 Title: Training and Evaluating Clustering performance with STEAM
-Version: 1.0
+Version: 1.1
 Author: Samantha Reynoso, Courtney Schiebout, Revanth Krishna, Fan Zhang (University of Colorado School of Medicine  - CU Medicine)
 Maintainer: Revanth Krishna <revanth.krishna@cuanschutz.edu>
 Correspondance: Fan Zhang <fan.3.zhang@cuanschutz.edu>
@@ -27,7 +27,9 @@ Imports:
   grDevices,
   stats,
   utils,
-  randomForest
+  randomForest,
+  aricode,
+  FNN
 Suggests: knitr,
     rmarkdown,
     ggpointdensity,

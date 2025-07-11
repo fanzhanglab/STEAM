@@ -1,44 +1,44 @@
 #' Plotting Misclassified labels
 #'
+#' @param label_colors list of colors for plotting labels
 #' @param steam_obj STEAM Object
-#' @param colors list of colors for clusters
+#'
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom scales hue_pal
 #' @export
-plot_misclassified_cells <- function(steam_obj, colors = NULL) {
+plot_misclassified_cells <- function(steam_obj, label_colors = NULL) {
 
-  assign_layer_colors <- function(labels, colors = NULL) {
-    unique_labels <- unique(labels)
-    num_layers <- length(unique_labels)
-
-    if (!is.null(colors)) {
-      layer_colors <- colors
-    } else {
-      default_colors <- rainbow(num_layers)
-      layer_colors <- setNames(default_colors, unique_labels)
-    }
-
-    layer_colors["Misclassified"] <- "black"
-
-    return(layer_colors)
-  }
-
-  cols <- assign_layer_colors(steam_obj$labels, colors)
+  # Load spatial coordinates
   coordinates <- steam_obj$spatial
-  if (is.null(coordinates)) {
-    colnames(coordinates) <- c("cell_id", "col", "row")
-  } else {
-    colnames(coordinates) <- c("cell_id", "col", "row")
+  if (is.null(coordinates)) stop("No spatial coordinates found in STEAM object")
+
+  coordinates <- as.data.frame(coordinates)
+
+  # Handle different naming conventions
+  colnames_lower <- tolower(colnames(coordinates))
+  x_name <- colnames(coordinates)[which(colnames_lower %in% c("x", "col", "column"))[1]]
+  y_name <- colnames(coordinates)[which(colnames_lower %in% c("y", "row"))[1]]
+
+  if (is.na(x_name) || is.na(y_name)) stop("Failed to detect spatial coordinate columns.")
+
+  # Add cell ID if not present
+  if (!"cell_id" %in% colnames(coordinates)) {
+    coordinates$cell_id <- rownames(coordinates)
   }
 
-  # full data for plotting
+  # Reorder columns
+  coordinates <- coordinates[, c("cell_id", x_name, y_name)]
+  colnames(coordinates) <- c("cell_id", "Col", "Row")
+
+  # Prepare plotting data
   full_data <- data.frame(
-    Row = -coordinates$row,
-    Col = coordinates$col,
-    Labels = as.character(steam_obj$labels)  # True labels
+    Row = -coordinates$Row,
+    Col = coordinates$Col,
+    Labels = as.character(steam_obj$labels),
+    row.names = coordinates$cell_id
   )
 
-  # test coordinates, labels, and predictions
+  # Extract test data
   test_coords <- steam_obj$test$test.data.coords
   test_labels <- as.character(steam_obj$test$test.data.labels)
   predictions <- as.character(steam_obj$test$predictions)
@@ -46,37 +46,33 @@ plot_misclassified_cells <- function(steam_obj, colors = NULL) {
   # Identify misclassified cells
   misclassified <- test_labels != predictions
   test_indices <- rownames(test_coords)
-  matching_indices <- match(test_indices, rownames(coordinates))
+  matching_indices <- match(test_indices, rownames(full_data))
   full_data$Labels[matching_indices[misclassified]] <- "Misclassified"
 
+  # Generate color palette
   unique_labels <- unique(full_data$Labels)
-  if (length(unique_labels) > 8) {
+  base_labels <- setdiff(unique_labels, "Misclassified")
 
-    missing_labels <- setdiff(unique_labels, names(cols))
-    extra_colors <- setNames(broader_palette[1:length(missing_labels)], missing_labels)
-    cols <- c(cols, extra_colors)
-  } else {
-
-    missing_labels <- setdiff(unique_labels, names(cols))
-    for (lbl in missing_labels) {
-      cols[lbl] <- broader_palette[length(cols) + 1]
+  if (is.null(label_colors)) {
+    base_colors <- scales::hue_pal()(length(base_labels))
+    label_colors <- setNames(base_colors, base_labels)
+    if ("Misclassified" %in% unique_labels) {
+      label_colors <- c(label_colors, Misclassified = "black")
     }
   }
 
+  # Plot
   ggplot(full_data, aes(x = Col, y = Row, color = Labels)) +
     geom_point(size = 3) +
-    scale_color_manual(values = cols) +
-    labs(
-      title = "",
-      color = "Layer/Label"
-    ) +
+    scale_color_manual(values = label_colors) +
+    labs(title = "", color = "Layer/Label") +
     theme_classic() +
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
       axis.title = element_blank(),
-      axis.line = element_blank(),   # Removes axis lines
-      panel.grid = element_blank(),  # Removes grid
-      panel.border = element_blank() # Removes panel border
+      axis.line = element_blank(),
+      panel.grid = element_blank(),
+      panel.border = element_blank()
     )
 }
