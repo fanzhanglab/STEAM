@@ -3,12 +3,59 @@ title: "Tutorial of applying STEAM to evaluate clustering performance using the 
 output:
   html_document: default
   pdf_document: default
+date: "06-30-2025"
 editor_options:
   markdown:
     wrap: sentence
 ---
 
-This vignette outlines the steps of applying STEAM on the 10X Visium DLPFC (Dorsolateral Prefrontal Cortex) data. Four different classification models are implemented in STEAM to evaluate clustering results, including Random Forest, Support Vector Machines, XGBoost, and Multinomial Logistic Regression. Here, cell-type classification is performed by incorporating spatial neighborhood analysis and Random Forest model with cross validation.
+This vignette outlines the steps of applying STEAM on the 10X Visium DLPFC (Dorsolateral Prefrontal Cortex) data.
+Four different classification models are implemented in STEAM to evaluate clustering results, including Random Forest, Support Vector Machines, XGBoost, and Multinomial Logistic Regression.
+Here, cell-type classification is performed by incorporating spatial neighborhood analysis and Random Forest model with cross validation.
+
+Before using STEAM, we recommend preprocessing your spatial transcriptomics data using the **Seurat** framework, as it provides a robust set of tools for spatial data normalization, scaling, and visualization.
+The Satija Lab offers detailed vignettes to guide you through spatial data preprocessing: - [Seurat Spatial Vignette (Part 1)](https://satijalab.org/seurat/articles/spatial_vignette.html) - [Seurat Spatial Vignette (Part 2 - Seurat v5)](https://satijalab.org/seurat/articles/spatial_v5.html) - [Visium HD Analysis Vignette](https://satijalab.org/seurat/articles/spatial_hd.html)
+
+To run STEAM, you need the following components: - A normalized gene expression matrix - An X,Y spatial coordinates matrix - A vector of ground truth or predicted labels
+
+You can input this data into STEAM in two ways:
+
+**Option 1: Manual Input**\
+If you have already prepared each component individually:
+
+``` r
+STEAM.obj <- LoadSTEAM(
+  count_exp = Seurat.obj@assays$SCT$scale.data,
+  spatial   = Seurat.obj@images$slice1@coordinates,
+  labels    = Seurat.obj$Labs,
+  pca = Seurat.obj$pca, 
+  umap = NULL, 
+  clusters = NULL, 
+  Seurat.obj = NULL, 
+  label.column = NULL, 
+  assay = "SCT"
+)
+```
+
+**Option 2: Input a Seurat Object Directly**\
+If your data is stored in a Seurat object (with SCT normalization, spatial coordinates, and labels already assigned), you can input it directly:
+
+``` r
+STEAM.obj <- LoadSTEAM(
+  count_exp  = NULL,
+  spatial    = NULL,
+  labels     = NULL,
+  Seurat.obj = Seurat.obj
+)
+```
+
+Note: When using a Seurat object as input, STEAM expects:
+
+``` r
+Normalized expression matrix: Seurat.obj@assays$SCT$scale.data
+Spatial coordinates: Seurat.obj@images$slice1@coordinates or in Seurat::GetTissueCoordinates(Seurat.obj)
+Labels: SeuratObject@meta.data$cell_type, SeuratObject@meta.data$seurat_clusters, or SeuratObject@meta.data$YourLabelsName (if you have custom labels added)
+```
 
 # Load libraries
 
@@ -81,9 +128,100 @@ STEAM.obj <- RunSTEAM(
 
 ```
 
+# Custom Model Training Examples
+
+```{r setup, eval=FALSE, include=TRUE}
+knitr::opts_chunk$set(eval = FALSE, include = TRUE)
+
+# Random Forest with custom tuning grid
+rf_grid <- expand.grid(mtry = c(100, 200, 300))
+
+STEAM.obj <- RunSTEAM(
+  STEAM.obj,
+  train.ratio = 0.8,
+  n.size = 5,
+  seed = 123,
+  cv.folds = 5,
+  cv.repeats = 1,
+  trainval.ratio = 0.8,
+  model = "rf",
+  n.tree = 300,
+  train.folder.name = "./model_rf",
+  allowParallel = TRUE,
+  tune.grid = rf_grid
+)
+
+# XGBoost with custom tuning grid
+xgb_grid <- expand.grid(
+  nrounds = c(100, 300),
+  max_depth = c(3, 5),
+  eta = c(0.05, 0.1),
+  gamma = 0,
+  colsample_bytree = 0.8,
+  min_child_weight = 1,
+  subsample = 0.8
+)
+
+STEAM.obj <- RunSTEAM(
+  STEAM.obj,
+  train.ratio = 0.8,
+  n.size = 5,
+  seed = 123,
+  cv.folds = 5,
+  cv.repeats = 1,
+  trainval.ratio = 0.8,
+  model = "xgb",
+  train.folder.name = "./model_xgb",
+  allowParallel = TRUE,
+  tune.grid = xgb_grid
+)
+
+# SVM linear with custom tuning grid
+svm_grid <- expand.grid(
+  C = c(0.05, 0.1, 0.5, 1),
+  sigma = c(0.001, 0.01, 0.05)
+)
+
+STEAM.obj <- RunSTEAM(
+  STEAM.obj,
+  train.ratio = 0.8,
+  n.size = 5,
+  seed = 123,
+  cv.folds = 5,
+  cv.repeats = 1,
+  trainval.ratio = 0.8,
+  model = "svm",
+  kernel = "linear",
+  train.folder.name = "./model_svm",
+  allowParallel = TRUE,
+  tune.grid = svm_grid
+)
+
+
+# Multinomial Logistic Regression with custom tuning grid
+multinom_grid <- expand.grid(decay = c(1, 5, 10, 15))
+
+STEAM.obj <- RunSTEAM(
+  STEAM.obj,
+  train.ratio = 0.8,
+  n.size = 5,
+  seed = 123,
+  cv.folds = 5,
+  cv.repeats = 1,
+  trainval.ratio = 0.8,
+  model = "multinom",
+  train.folder.name = "./model_multinom",
+  allowParallel = TRUE,
+  maxnweights = 6000,
+  tune.grid = multinom_grid
+)
+
+
+```
+
 # View the Performance Metrics from STEAM
 
-```{r}
+```{r fig.height=8, fig.width=8}
 # Evaluation metrics by generating Kappa, F1-score, Accuracy, etc.
 ViewMetrics(STEAM.obj)
 
@@ -99,9 +237,9 @@ A brief overview of how feature importance for each model is calculated:
 -   `svm`: the final model is extracted and computes the feature importance using the absolute magnitude of the weight for each feature. Feature weights are calculated from the dot product of SVM coefficients and the support vector matrix.
 -   `multinom`: the coefficient matrix is extracted, containing the feature coefficients for each class. The feature importance is calculated as the sum of absolute coefficient values across all classes. The intercept term is omitted.
 
-```{r, fig.align = "center"}
+```{r fig.align="center", fig.height=3, fig.width=4}
 # View feature importance
-STEAM:::feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
+feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
 
 ```
 
@@ -109,9 +247,9 @@ STEAM:::feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Impor
 
 The feature_expression function extracts the expression values for the user-specified feature across the different layers and plots how the expression varies across layers.
 
-```{r, fig.align = "center"}
+```{r fig.align="center", fig.height=3, fig.width=4}
 # Show the gene expression per layer
-STEAM::feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Across Layers")
+feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Across Layers")
 ```
 
 # View the Misclassifications
@@ -119,9 +257,9 @@ STEAM::feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expressio
 The plot_misclassified_cells function extracts the spatial coordinates and labels from the STEAM.obj and compares the true labels to the model's predictions in order to identify the misclassified cells.
 Misclassifications are shown as black dots on the plot.
 
-```{r, fig.height = 8, fig.width = 10, fig.align = "center"}
+```{r fig.align="center", fig.height=4, fig.width=5}
 
 # Plot misclassified cells
-STEAM::plot_misclassified_cells(STEAM.obj)
+plot_misclassified_cells(STEAM.obj)
 
 ```

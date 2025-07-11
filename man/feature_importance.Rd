@@ -11,7 +11,7 @@ feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
 
 \item{top_n}{Top n}
 
-\item{title}{title}
+\item{title}{plot title}
 }
 \description{
 Feature Importance

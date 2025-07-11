@@ -2,7 +2,7 @@
 #'
 #' @param STEAM.obj STEAM Object
 #' @param top_n Top n
-#' @param title title
+#' @param title plot title
 #'
 #' @export
 feature_importance <- function(STEAM.obj, top_n = 10, title = "Top Features by Importance") {

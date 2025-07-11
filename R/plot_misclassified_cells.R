@@ -63,7 +63,7 @@ plot_misclassified_cells <- function(steam_obj, label_colors = NULL) {
 
   # Plot
   ggplot(full_data, aes(x = Col, y = Row, color = Labels)) +
-    geom_point(size = 3) +
+    geom_point(size = 1) +
     scale_color_manual(values = label_colors) +
     labs(title = "", color = "Layer/Label") +
     theme_classic() +

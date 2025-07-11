@@ -6,3 +6,4 @@
 .Rbuildignore
 inst/doc
 ^data-raw$
+.DS_Store
