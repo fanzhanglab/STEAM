@@ -21,22 +21,72 @@
 #'e1071
 #'
 #' @export
-RunSTEAM <- function(STEAM.obj, train.ratio = 0.8, n.size = 5, seed = 123, cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8, model = "rf", n.tree = 500, kernel = 'linear', train.folder.name = 'train.out', allowParallel = FALSE) {
+RunSTEAM <- function(
+    STEAM.obj,
+    mode = c("simple","nested"),
+    train.ratio = 0.8,
+    n.size = 5,
+    seed = 123,
+    # simple mode
+    cv.folds = 10, cv.repeats = 3, trainval.ratio = 0.8,
+    # nested mode
+    n_outer_folds = 5, n_inner_folds = 3,
+    # model
+    model = "rf", n.tree = 500, kernel = "linear",
+    train.folder.name = "train.out",
+    allowParallel = FALSE,              # inner caret parallel
+    metric = "Kappa",
+    tune.grid = NULL,
+    outer_folds = NULL, inner_folds = NULL,
+    verbose = TRUE,
+    cv.cores = 1,
+    parallel_mode = NULL,
+    maxnweights = 10000
+) {
   set.seed(seed)
-  STEAM.obj <- data.split(STEAM.obj, train.ratio = train.ratio)
-  message("Finished Data Splitting")
-
-  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = TRUE)
-  STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = FALSE)
-  message("Finished neighborhood averaging")
-
-
-  STEAM.obj <- model.train(STEAM.obj, model, n.tree = n.tree, kernel = kernel, cv.folds = cv.folds, cv.repeats = cv.repeats, trainval.ratio = trainval.ratio, train.folder.name = train.folder.name, allowParallel = allowParallel)
-  message("Finished Model training")
-
-  STEAM.obj <- model.predict(STEAM.obj)
-  message("Finished Evaluation")
-
-  return(STEAM.obj)
+  mode <- match.arg(mode)
+  
+  if (mode == "simple") {
+    STEAM.obj <- data.split(STEAM.obj, train.ratio = train.ratio, seed = seed)
+    message("Finished Data Splitting")
+    
+    STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = TRUE)
+    STEAM.obj <- neighborhood.avg(STEAM.obj, n.size = n.size, is_train = FALSE)
+    message("Finished neighborhood averaging")
+    
+    STEAM.obj <- model.train(
+      STEAM.obj, mode = "simple",
+      model = model, kernel = kernel,
+      cv.folds = cv.folds, cv.repeats = cv.repeats,
+      metric = metric, tune.grid = tune.grid,
+      allowParallel = allowParallel, seed = seed, n.size = n.size,
+      maxnweights = maxnweights        # NEW: pass through maxnweights
+    )
+    message("Finished Model training")
+    
+    STEAM.obj <- model.predict(STEAM.obj, mode = "simple")
+    message("Finished Evaluation")
+    return(STEAM.obj)
+  }
+  
+  # --- nested mode ---
+  STEAM.obj <- model.train(
+    STEAM.obj, mode = "nested",
+    model = model, kernel = kernel,
+    n_outer_folds = n_outer_folds, n_inner_folds = n_inner_folds,
+    metric = metric, tune.grid = tune.grid,
+    allowParallel = allowParallel,   # inner caret parallel (will be disabled if cv.cores>1)
+    seed = seed, n.size = n.size,
+    outer_folds = outer_folds, inner_folds = inner_folds,
+    verbose = verbose,
+    cv.cores = cv.cores,
+    parallel_mode = parallel_mode,
+    maxnweights = maxnweights
+  )
+  message("Finished NestedCV training (outer+inner with leakage-safe averaging)")
+  
+  STEAM.obj <- model.predict(STEAM.obj, mode = "nested")
+  message("Collected NestedCV results")
+  STEAM.obj
 }
 
