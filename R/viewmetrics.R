@@ -58,7 +58,7 @@ ViewMetrics <- function(STEAM.obj, fold = NULL, view = c("both","overall","folds
     p_conf <- ggplot(conf_df, aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
       geom_tile() + geom_text(aes(label = Value, color = TextColor), size = 6) +
       scale_fill_viridis_c() + scale_color_identity() +
-      labs(title = "Confusion Matrix", x = "Actual", y = "Predicted") +
+      labs(title = "Confusion Matrix - Spatial CV", x = "Actual", y = "Predicted") +
       theme_classic() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
     
     if (return_data) return(list(overall = metrics_data, per_fold = NULL))
@@ -166,7 +166,7 @@ ViewMetrics <- function(STEAM.obj, fold = NULL, view = c("both","overall","folds
   p_conf <- ggplot(conf_df, aes(x = Actual_Label, y = Predicted_Label, fill = Value)) +
     geom_tile() + geom_text(aes(label = Value, color = TextColor), size = 6) +
     scale_fill_viridis_c() + scale_color_identity() +
-    labs(title = paste0("Confusion Matrix (Outer fold ", chosen_fold, ")"),
+    labs(title = paste0("Confusion Matrix (Outer fold ", chosen_fold, ") - Spatial CV"),
          x = "Actual", y = "Predicted") +
     theme_classic() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
