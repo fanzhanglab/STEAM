@@ -1,10 +1,3 @@
-#' Plotting Misclassified labels
-#'
-#' @param steam_obj STEAM Object
-#' @param colors list of colors for clusters
-#' @importFrom ggplot2 ggplot aes geom_point scale_color_manual labs theme_minimal theme element_blank
-#' @importFrom scales hue_pal
-#' @export
 plot_misclassified_cells <- function(steam_obj, label_colors = NULL, fold = "all") {
   suppressPackageStartupMessages({
     library(ggplot2); library(scales)
@@ -60,7 +53,7 @@ plot_misclassified_cells <- function(steam_obj, label_colors = NULL, fold = "all
       }))
       if (is.null(all_preds) || nrow(all_preds) == 0) stop("No nested CV predictions found.")
       
-
+      
       if (!"cell_id" %in% colnames(all_preds)) {
         if (!is.null(rownames(all_preds))) {
           all_preds$cell_id <- rownames(all_preds)
@@ -107,18 +100,37 @@ plot_misclassified_cells <- function(steam_obj, label_colors = NULL, fold = "all
   mis_labs  <- grep("^Misclassified", labs_all, value = TRUE)
   
   if (is.null(label_colors)) {
-    base_cols <- setNames(scales::hue_pal()(length(base_labs)), base_labs)
+    # FIXED: Use ALL possible labels from the entire dataset for consistent colors
+    # Get all unique labels from the original steam_obj to ensure consistency across folds
+    all_possible_labels <- sort(unique(as.character(steam_obj$labels)))  # Sort for consistent order
+    
+    # Generate colors for all possible labels (not just those present in current fold)
+    all_label_colors <- setNames(scales::hue_pal()(length(all_possible_labels)), all_possible_labels)
+    
+    # Subset to only the base labels present in current visualization
+    base_cols <- all_label_colors[names(all_label_colors) %in% base_labs]
   } else {
     base_cols <- label_colors
     missing_base <- setdiff(base_labs, names(base_cols))
     if (length(missing_base)) {
-      base_cols <- c(base_cols, setNames(scales::hue_pal()(length(missing_base)), missing_base))
+      # For missing labels, still use consistent color generation based on all labels
+      if (!exists("all_possible_labels")) {
+        all_possible_labels <- sort(unique(as.character(steam_obj$labels)))
+      }
+      all_label_colors <- setNames(scales::hue_pal()(length(all_possible_labels)), all_possible_labels)
+      base_cols <- c(base_cols, all_label_colors[missing_base])
     }
   }
   
-  # misclassified fold colors (distinct hues to see fold source)
+  # misclassified fold colors
   if (length(mis_labs)) {
-    mis_cols <- setNames(scales::hue_pal(h = c(0, 360), l = 35, c = 100)(length(mis_labs)), mis_labs)
+    if (identical(fold, "all")) {
+      # For viewing all folds: distinct colors for each fold to differentiate them
+      mis_cols <- setNames(scales::hue_pal(h = c(0, 360), l = 35, c = 100)(length(mis_labs)), mis_labs)
+    } else {
+      # For individual fold viewing: use black for clarity
+      mis_cols <- setNames(rep("black", length(mis_labs)), mis_labs)
+    }
     cols <- c(base_cols, mis_cols)
   } else {
     cols <- base_cols
@@ -130,9 +142,11 @@ plot_misclassified_cells <- function(steam_obj, label_colors = NULL, fold = "all
     scale_color_manual(values = cols) +
     labs(
       title = if (!is.null(steam_obj$nested) && identical(fold, "all"))
-        "Misclassified Cells (colored by outer fold)"
+        "Misclassified Cells (colored by outer fold) - Spatial CV"
       else if (!is.null(steam_obj$nested) && is.numeric(fold))
-        paste0("Misclassified Cells (Fold ", fold, ")")
+        paste0("Misclassified Cells (Fold ", fold, ") - Spatial CV")
+      else if (!is.null(steam_obj$test))
+        "Misclassified Cells - Spatial CV"
       else "Misclassified Cells",
       color = "Layer / Status"
     ) +

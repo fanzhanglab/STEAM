@@ -60,7 +60,7 @@ RunSTEAM <- function(
       cv.folds = cv.folds, cv.repeats = cv.repeats,
       metric = metric, tune.grid = tune.grid,
       allowParallel = allowParallel, seed = seed, n.size = n.size,
-      maxnweights = maxnweights        # NEW: pass through maxnweights
+      maxnweights = maxnweights 
     )
     message("Finished Model training")
     
