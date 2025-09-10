@@ -4,8 +4,9 @@
 #' @param train.ratio Numeric (0–1), proportion of data used for training
 #' @return Modified STEAM object with train/test subslots
 #' @keywords internal
-data.split <- function(STEAM.obj, train.ratio) {
+data.split <- function(STEAM.obj, train.ratio, seed = 123) {
 
+  set.seed(seed)
   # Universal labels
   clean_labels <- function(labels) {
     labels <- as.character(labels)

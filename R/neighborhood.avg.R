@@ -37,7 +37,7 @@ neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
     rn <- unique(as.character(STEAM.obj$train$train.data.labels))
 
     if (length(rn) < 2) {
-      stop("Training labels contain only one class — classification not possible.")
+      stop("Training labels contain only one class, classification not possible.")
     }
 
     for (i in seq_along(rn)) {

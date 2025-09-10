@@ -23,6 +23,9 @@
 #' @param cv.cores Number of cores for nestedcv parallelism.
 #' @param parallel_mode Optional parallel backend ("multisession", etc.).
 #' @param maxnweights Maximum weights (for multinom models).
+#' @param trainval.ratio Train set ratio for train-val split
+#' @param n.tree tree depth
+#' @param train.folder.name folder name to save
 #'
 #' @return A STEAM object with trained models, predictions, and evaluation metrics.
 #' @export

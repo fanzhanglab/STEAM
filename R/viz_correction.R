@@ -108,10 +108,6 @@ IterativePlot <- function(STEAM.obj, fold = NULL, iterations = NULL) {
 
   validateFoldParameter(STEAM.obj, fold)
 
-  safeRequirePackage("patchwork", "Install with: install.packages('patchwork')")
-
-  suppressPackageStartupMessages(library(patchwork))
-
   coordinates <- extractSpatialCoordinates(STEAM.obj)
 
   if (is.null(STEAM.obj$nested$ncv$outer_result[[fold]])) {
@@ -481,7 +477,6 @@ AccuracyPairedBarChart <- function(STEAM.obj, show_improvements = TRUE, show_cor
 NeighborhoodHomogeneityAnalysis <- function(STEAM.obj, k = NULL) {
 
   safeRequirePackage("RANN", "Install with: install.packages('RANN')")
-  library(RANN)
 
   if (is.null(k)) {
     if (!is.null(STEAM.obj$spatial_anchor_analysis$parameters$k)) {

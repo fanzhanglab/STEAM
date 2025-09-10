@@ -45,13 +45,19 @@ RunSTEAM(
 
 \item{cv.repeats}{Number of repeats for repeated CV (simple mode).}
 
+\item{trainval.ratio}{Train set ratio for train-val split}
+
 \item{n_outer_folds}{Outer folds for nested CV.}
 
 \item{n_inner_folds}{Inner folds for nested CV.}
 
 \item{model}{Model type: "rf", "svm", "xgb", or "multinom".}
 
+\item{n.tree}{tree depth}
+
 \item{kernel}{Kernel type for SVM ("linear" or "radial").}
+
+\item{train.folder.name}{folder name to save}
 
 \item{allowParallel}{Allow caret-level parallelism (default FALSE).}
 

@@ -9,7 +9,6 @@
 #' @keywords internal
 model.predict <- function(STEAM.obj, mode = c("simple","nested")) {
   suppressPackageStartupMessages({
-    library(caret)
   })
   mode <- match.arg(mode)
 

@@ -199,12 +199,14 @@ STEAMCorrection <- function(STEAM.obj,
 
               if (verbose) {
                 is_correct <- fold_ground_truth[correction$cell_id] == correction$new_prediction
-                status <- if (is_correct) "✓" else "✗"
+                status <- if (is_correct) "OK" else "FAIL"
                 stuck_indicator <- if (correction$is_stuck_cell) " [STUCK]" else ""
-                cat(sprintf("    %s: %s → %s (%s, %.2f consensus) %s%s\n",
+                cat(sprintf("    %s: %s -> %s (%s, %.2f consensus) %s%s\n",
                             correction$cell_id, correction$current_prediction,
                             correction$new_prediction, correction$voting_rank,
                             correction$consensus, status, stuck_indicator))
+
+
               }
             }
           }
@@ -250,7 +252,7 @@ STEAMCorrection <- function(STEAM.obj,
       cat(sprintf("Original accuracy: %.3f\n", initial_accuracy))
       cat(sprintf("Final accuracy: %.3f\n", final_accuracy))
       cat(sprintf("Improvement: %.3f\n", final_accuracy - initial_accuracy))
-      cat(sprintf("Misclassified cells reduced: %d → %d\n",
+      cat(sprintf("Misclassified cells reduced: %d -> %d\n",
                   sum(current_preds[common_cells] != ground_truth[common_cells]),
                   sum(fold_preds != fold_ground_truth)))
     }
@@ -269,7 +271,7 @@ STEAMCorrection <- function(STEAM.obj,
     cat(sprintf("\n=== MULTI-FOLD SUMMARY ===\n"))
     for (i in seq_along(all_fold_results)) {
       fold_result <- all_fold_results[[i]]
-      cat(sprintf("Fold %d: %.1f%% → %.1f%% (%.1f%% improvement, %d corrections)\n",
+      cat(sprintf("Fold %d: %.1f%% -> %.1f%% (%.1f%% improvement, %d corrections)\n",
                   fold_result$fold_number,
                   fold_result$initial_accuracy * 100,
                   fold_result$final_accuracy * 100,

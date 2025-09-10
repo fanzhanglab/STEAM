@@ -44,7 +44,7 @@ model.train <- function(
   # 1. Chi-squared threshold: 95th percentile of chi-squared distribution
   # 2. CV threshold: 0.3 (empirically validated for stratification quality)
   # 3. MAD threshold: 50% of maximum possible class proportion deviation
-  # 4. Weighted combination: χ²=40%, CV=35%, MAD=25% (reflects relative importance)
+  # 4. Weighted combination: \u03C7\u00B2=40%, CV=35%, MAD=25% (reflects relative importance)
   # 5. Sigmoid transformation: steepness=8, midpoint=0.5 (discriminative calibration)
   #
   # ACCESS STRATIFICATION METRICS:
@@ -401,8 +401,8 @@ model.train <- function(
     # Calibrated normalization based on theoretical bounds and empirical validation
 
     # Chi-squared calibration:
-    # Perfect stratification: χ² = 0
-    # Poor stratification: χ² ≈ n_classes × (n_folds - 1) for worst case
+    # Perfect stratification: \u03C7\u00B2 = 0
+    # Poor stratification: \u03C7\u00B2 \u2248 n_classes \u00D7 (n_folds - 1) for worst case
     # Use 95th percentile threshold based on degrees of freedom
     n_classes <- length(classes)
     n_folds <- length(outer_folds)
@@ -411,15 +411,15 @@ model.train <- function(
 
     # CV calibration:
     # Perfect stratification: CV = 0
-    # Random assignment: CV ≈ sqrt(1/n_samples_per_class) for binomial distribution
+    # Random assignment: CV \u2248 sqrt(1/n_samples_per_class) for binomial distribution
     # Poor stratification: CV can approach 1 or higher
     cv_threshold <- 0.3  # Empirically validated threshold for "good" stratification
     cv_normalized <- pmin(1, overall_cv / cv_threshold)
 
     # MAD calibration:
     # Perfect stratification: MAD = 0
-    # Random assignment: MAD ≈ sqrt(p*(1-p)/n_samples_per_fold) for binomial
-    # Worst case: MAD ≈ max class proportion (when all samples of a class in one fold)
+    # Random assignment: MAD \u2248 sqrt(p*(1-p)/n_samples_per_fold) for binomial
+    # Worst case: MAD \u2248 max class proportion (when all samples of a class in one fold)
     max_class_prop <- max(table(y)) / length(y)
     mad_threshold <- max_class_prop * 0.5  # Half of maximum possible deviation
     mad_normalized <- pmin(1, overall_mad / mad_threshold)
@@ -535,14 +535,14 @@ model.train <- function(
         p_val <- sq$chi_sq_p_values[i]
         p_str <- if (is.na(p_val)) "N/A" else round(p_val, 3)
 
-        message("  ", class_name, ": χ²=", chi_sq, ", CV=", cv, ", MAD=", mad, ", p=", p_str)
+        message("  ", class_name, ": \u03C7\u00B2=", chi_sq, ", CV=", cv, ", MAD=", mad, ", p=", p_str)
       }
 
       # Quality interpretation
       if (sq$stratification_quality_index > 0.8) {
         message("\nEXCELLENT stratification quality")
       } else if (sq$stratification_quality_index > 0.6) {
-        message("\n✓ GOOD stratification quality")
+        message("\n\u2713 GOOD stratification quality")
       } else if (sq$stratification_quality_index > 0.4) {
         message("\nFAIR stratification quality - consider reviewing class distributions")
       } else {
@@ -688,7 +688,7 @@ model.train <- function(
         if (stratification_quality > 0.8) {
           message("EXCELLENT stratification quality")
         } else if (stratification_quality > 0.6) {
-          message("✓ GOOD stratification quality")
+          message("\n\u2713 GOOD stratification quality")
         } else {
           message("FAIR stratification quality")
         }
@@ -809,7 +809,7 @@ model.train <- function(
   )
 
   if (cv.cores > 1 && isTRUE(allowParallel)) {
-    message("Note: cv.cores > 1 and allowParallel = TRUE → disabling inner caret parallel to avoid nested parallelism.")
+    message("Note: cv.cores > 1 and allowParallel = TRUE \u2192 disabling inner caret parallel to avoid nested parallelism.")
     tr_ctrl_inner$allowParallel <- FALSE
   }
 

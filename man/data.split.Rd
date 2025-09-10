@@ -4,7 +4,7 @@
 \alias{data.split}
 \title{Split STEAM object into training and testing sets}
 \usage{
-data.split(STEAM.obj, train.ratio)
+data.split(STEAM.obj, train.ratio, seed = 123)
 }
 \arguments{
 \item{STEAM.obj}{A STEAM object with expression, labels, and spatial slots}

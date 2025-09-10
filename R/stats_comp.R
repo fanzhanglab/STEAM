@@ -150,7 +150,7 @@ validate_single_steam_result <- function(steam_result, method_name, metric, verb
     validation$structure_type <- "simple"
     model_obj <- train_obj$model
 
-    if (verbose) cat("✓ Simple CV structure detected\n")
+    if (verbose) cat("Simple CV structure detected\n")
 
     # Check for resample data
     if ("resample" %in% names(model_obj)) {
@@ -588,7 +588,7 @@ perform_statistical_tests <- function(performance_data, statistical_tests, compa
         )
 
         if (verbose) {
-          message("Friedman test: χ² = ", round(friedman_test$statistic, 3),
+          message("Friedman test: chi^2 = ", round(friedman_test$statistic, 3),
                   ", df = ", friedman_test$parameter,
                   ", p = ", round(friedman_test$p.value, 4))
         }
@@ -1071,7 +1071,7 @@ print_comparison_summary <- function(results) {
   cat("\nPERFORMANCE RANKING:\n")
   ranking <- results$summary$performance_ranking
   for (i in seq_len(nrow(ranking))) {
-    cat(sprintf("%d. %s: %.4f ± %.4f\n",
+    cat(sprintf("%d. %s: %.4f +/- %.4f\n",
                 ranking$rank[i],
                 ranking$method[i],
                 ranking$mean[i],

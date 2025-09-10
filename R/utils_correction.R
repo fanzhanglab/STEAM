@@ -249,19 +249,6 @@ safeRequirePackage <- function(package_name, install_message = NULL) {
   return(TRUE)
 }
 
-#' Load Patchwork Package Safely
-#'
-#' Centralized function to load patchwork for combined plots
-#'
-#' @return TRUE if loaded successfully
-#' @export
-loadPatchwork <- function() {
-  if (!requireNamespace("patchwork", quietly = TRUE)) {
-    stop("patchwork package is required for combined plots. Install with: install.packages('patchwork')")
-  }
-  suppressPackageStartupMessages(library(patchwork))
-  return(TRUE)
-}
 
 #' Extract Ground Truth from STEAM Object
 #'
