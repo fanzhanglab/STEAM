@@ -2,17 +2,41 @@
 % Please edit documentation in R/feature_importance.R
 \name{feature_importance}
 \alias{feature_importance}
-\title{Feature Importance}
+\title{Plot Top Feature Importances from a Trained STEAM Model}
 \usage{
-feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
+feature_importance(
+  STEAM.obj,
+  top_n = 10,
+  title = "Top Features by Importance",
+  nested_fold = "best"
+)
 }
 \arguments{
-\item{STEAM.obj}{STEAM Object}
+\item{STEAM.obj}{A trained STEAM object containing a model in \code{train$model},
+or nested CV results in \code{nested$ncv}.}
 
-\item{top_n}{Top n}
+\item{top_n}{Integer, number of top features to display. Defaults to 10.}
 
-\item{title}{plot title}
+\item{title}{Character, plot title. Defaults to \code{"Top Features by Importance"}.}
+
+\item{nested_fold}{Either an integer indicating which outer fold to use, or
+\code{"best"} (default) to automatically choose the fold with highest Kappa.}
+}
+\value{
+A named numeric vector of feature importance scores (invisibly).
+A barplot of the top features is also printed.
 }
 \description{
-Feature Importance
+Computes and plots variable importance scores from a trained STEAM model,
+using \pkg{caret} variable importance or model-specific coefficients when
+available. Supports Random Forest, XGBoost, SVM, and multinomial logistic regression.
+}
+\examples{
+\dontrun{
+data(DLPFC)
+steam_obj <- LoadSTEAM(DLPFC, label.column = "Labels", assay = "SCT")
+steam_obj <- RunSTEAM(steam_obj, n_outer_folds = 2, n_inner_folds = 2,
+                      model = "rf", cv.cores = 2)
+feature_importance(steam_obj, top_n = 15)
+}
 }

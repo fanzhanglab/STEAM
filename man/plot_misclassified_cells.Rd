@@ -2,15 +2,28 @@
 % Please edit documentation in R/plot_misclassified_cells.R
 \name{plot_misclassified_cells}
 \alias{plot_misclassified_cells}
-\title{Plotting Misclassified labels}
+\title{Plot Misclassified Cells}
 \usage{
-plot_misclassified_cells(steam_obj, label_colors = NULL)
+plot_misclassified_cells(steam_obj, label_colors = NULL, fold = "all")
 }
 \arguments{
-\item{steam_obj}{STEAM Object}
+\item{steam_obj}{A STEAM object with spatial coordinates and predictions.}
 
-\item{label_colors}{list of colors for plotting labels}
+\item{label_colors}{Optional named vector of colors for labels.}
+
+\item{fold}{Either "all" (show misclassifications from all outer folds)
+or an integer specifying one outer fold.}
+}
+\value{
+A ggplot2 plot object.
 }
 \description{
-Plotting Misclassified labels
+Visualize spatial positions of misclassified cells from STEAM predictions,
+either from a simple train/test split or nested cross-validation.
+}
+\examples{
+\dontrun{
+  plot_misclassified_cells(STEAM.obj)
+  plot_misclassified_cells(STEAM.obj, fold = 1)
+}
 }

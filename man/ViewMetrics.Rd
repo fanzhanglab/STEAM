@@ -2,13 +2,48 @@
 % Please edit documentation in R/viewmetrics.R
 \name{ViewMetrics}
 \alias{ViewMetrics}
-\title{View Metrics visualizations}
+\title{Visualize STEAM Model Metrics}
 \usage{
-ViewMetrics(STEAM.obj)
+ViewMetrics(
+  STEAM.obj,
+  fold = NULL,
+  view = c("both", "overall", "folds"),
+  return_data = FALSE
+)
 }
 \arguments{
-\item{STEAM.obj}{STEAM Object}
+\item{STEAM.obj}{A STEAM object with either simple or nested CV results.}
+
+\item{fold}{Optional integer. Specific fold to highlight when using nested CV.
+If NULL (default), selects best fold based on Kappa (or Accuracy fallback).}
+
+\item{view}{One of \code{"both"}, \code{"overall"}, or \code{"folds"}.
+Controls whether to show pooled metrics, per-fold results, or both.}
+
+\item{return_data}{Logical. If TRUE, returns raw metrics as a list instead of plotting.
+Default = FALSE.}
+}
+\value{
+\itemize{
+\item If \code{return_data=TRUE}, a list with:
+\describe{
+\item{overall}{Data frame of pooled metrics.}
+\item{per_fold}{Data frame of per-fold accuracy and Kappa values (nested only).}
+}
+\item Otherwise, prints tables and confusion matrices to the graphics device, invisibly returns NULL.
+}
 }
 \description{
-View Metrics visualizations
+Generates summary tables and confusion matrix visualizations for simple or nested
+STEAM models. Supports overall, per-fold, or combined views.
+}
+\examples{
+\dontrun{
+# Simple CV object
+ViewMetrics(STEAM.simple, view = "overall")
+
+# Nested CV object, showing per-fold performance
+ViewMetrics(STEAM.nested, view = "folds", fold = 2)
+}
+
 }

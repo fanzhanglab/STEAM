@@ -1,61 +1,52 @@
 ---
 title: "Tutorial of applying STEAM to evaluate clustering performance using the DLPFC spatial transcriptomic data"
 output:
-  html_document: default
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
   pdf_document: default
-date: "06-30-2025"
 editor_options:
+  chunk_output_type: console
   markdown:
     wrap: sentence
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8, fig.height = 5,
+  warning = FALSE, message = FALSE
+)
+```
+
+# Overview
+
 This vignette outlines the steps of applying STEAM on the 10X Visium DLPFC (Dorsolateral Prefrontal Cortex) data.
 Four different classification models are implemented in STEAM to evaluate clustering results, including Random Forest, Support Vector Machines, XGBoost, and Multinomial Logistic Regression.
+
 Here, cell-type classification is performed by incorporating spatial neighborhood analysis and Random Forest model with cross validation.
 
 Before using STEAM, we recommend preprocessing your spatial transcriptomics data using the **Seurat** framework, as it provides a robust set of tools for spatial data normalization, scaling, and visualization.
-The Satija Lab offers detailed vignettes to guide you through spatial data preprocessing: - [Seurat Spatial Vignette (Part 1)](https://satijalab.org/seurat/articles/spatial_vignette.html) - [Seurat Spatial Vignette (Part 2 - Seurat v5)](https://satijalab.org/seurat/articles/spatial_v5.html) - [Visium HD Analysis Vignette](https://satijalab.org/seurat/articles/spatial_hd.html)
+The Satija Lab offers detailed vignettes to guide you through spatial data preprocessing:
 
-To run STEAM, you need the following components: - A normalized gene expression matrix - An X,Y spatial coordinates matrix - A vector of ground truth or predicted labels
+-   \- [Seurat Spatial Vignette (Part 1)](https://satijalab.org/seurat/articles/spatial_vignette.html)
 
-You can input this data into STEAM in two ways:
+-   \- [Seurat Spatial Vignette (Part 2 - Seurat v5)](https://satijalab.org/seurat/articles/spatial_v5.html)
 
-**Option 1: Manual Input**\
-If you have already prepared each component individually:
+-   [Visium HD Analysis Vignette](https://satijalab.org/seurat/articles/spatial_hd.html)
 
-``` r
-STEAM.obj <- LoadSTEAM(
-  count_exp = Seurat.obj@assays$SCT$scale.data,
-  spatial   = Seurat.obj@images$slice1@coordinates,
-  labels    = Seurat.obj$Labs,
-  pca = Seurat.obj$pca, 
-  umap = NULL, 
-  clusters = NULL, 
-  Seurat.obj = NULL, 
-  label.column = NULL, 
-  assay = "SCT"
-)
-```
+To run STEAM, you need the following components:
 
-**Option 2: Input a Seurat Object Directly**\
-If your data is stored in a Seurat object (with SCT normalization, spatial coordinates, and labels already assigned), you can input it directly:
+-   A normalized gene expression matrix
 
-``` r
-STEAM.obj <- LoadSTEAM(
-  count_exp  = NULL,
-  spatial    = NULL,
-  labels     = NULL,
-  Seurat.obj = Seurat.obj
-)
-```
+-   An X,Y spatial coordinates matrix
 
-Note: When using a Seurat object as input, STEAM expects:
+-   A vector of ground truth or predicted labels
 
-``` r
-Normalized expression matrix: Seurat.obj@assays$SCT$scale.data
-Spatial coordinates: Seurat.obj@images$slice1@coordinates or in Seurat::GetTissueCoordinates(Seurat.obj)
-Labels: SeuratObject@meta.data$cell_type, SeuratObject@meta.data$seurat_clusters, or SeuratObject@meta.data$YourLabelsName (if you have custom labels added)
-```
+------------------------------------------------------------------------
 
 # Load libraries
 
@@ -63,6 +54,8 @@ Labels: SeuratObject@meta.data$cell_type, SeuratObject@meta.data$seurat_clusters
 library(STEAM)
 library(Seurat)
 ```
+
+# 1. Data Loading
 
 # Load data
 
@@ -73,65 +66,147 @@ This data is already preprocessed and includes a `SCTransform` scaled data matri
 data(DLPFC)
 ```
 
-# Create the STEAM object
+## 1.1 Load from a Seurat object
 
--   `count_exp`: The scaled gene expression matrix extracted earlier (`matrix`).
--   `spatial`: The spatial coordinates of the cells (`coordinates`), providing spatial context for the data.
--   `labels`: The cell type or clusters annotation labels pre-obtained by any clustering methods, which will be served as ground truth or reference for evaluation.
--   `Seurat.obj`: Set to NULL, indicating that no additional Seurat object is being passed for this analysis.
+You can input this data into STEAM in two ways:
 
-```{r}
-
-# Create a STEAM object using the LoadSTEAM function.
-STEAM.obj <- LoadSTEAM(count_exp = DLPFC$matrix, spatial = DLPFC$coordinates, labels = DLPFC$labels, Seurat.obj = NULL)
-
+```{r load-seurat, eval=FALSE}
+STEAM.obj <- LoadSTEAM(
+  Seurat.obj   = DLPFC,
+  label.column = "Labels",
+  assay        = "SCT"
+)
 ```
 
-# Run STEAM on the STEAM object using specified parameters
+**Parameters**
 
--   `STEAM.obj`: The STEAM object created using the LoadSTEAM function.
--   `train.ratio`: The proportion of data to use for training.
--   `n.size`: Neighborhood size used for averaging spatial data.
--   `seed`: Seed for random number generation to ensure reproducibility of results.
--   `cv.folds`: Number of folds for cross-validation .
--   `cv.repeats`: Number of repetitions for cross-validation.
--   `trainval.ratio`: Ratio for splitting the training set into training and validation subsets.
--   `model`: The machine learning model to use for classification.
-    -   `rf` = RandomForest
-    -   `svm` = Support Vector Machines,
-    -   `xgb` = XGBoost
-    -   `multinom` = Multinomial Logistic Regression
--   `n.tree`: Number of trees to use for the Random Forest model.
--   `kernel`: The kernel type for SVM.
--   `MaxNWeights`: The maximum number of weights allowed in the neural network of the `multinom` model.
--   `train.folder.name`: Name of the folder where training outputs will be stored ('train.out').
--   `allowParallel`: Whether to allow parallel computing for faster execution. Set to FALSE to run sequentially.
+-   `Seurat.obj` — a `Seurat` object with counts and metadata.
+-   `label.column` — metadata column containing the **ground‑truth** labels (e.g., cortical layer, cell type).
+-   `assay` — which assay to read (e.g., `"SCT"`, `"RNA"`).
 
-```{r}
+**Outputs** - `STEAM.obj$count_exp`, `STEAM.obj$labels`, `STEAM.obj$spatial` (if present in the Seurat object), and optional embeddings (PCA/UMAP) if available.
 
-# Run the STEAM analysis.
+## 1.2 Load from matrices / data.frames
 
-STEAM.obj <- RunSTEAM(
-  STEAM.obj,
-  train.ratio = 0.8, 
-  n.size = 5, 
-  seed = 123, 
-  cv.folds = 10, 
-  cv.repeats = 3, 
-  trainval.ratio = 0.8, 
-  model = "rf", 
-  n.tree = 100, 
-  kernel = 'linear', 
-  train.folder.name = 'train.out', 
-  allowParallel = TRUE
+```{r load-matrices, eval=FALSE}
+STEAM.obj <- LoadSTEAM(
+  count_exp = expr,     # genes x cells (or cells x genes; see package docs)
+  spatial   = coords,   # data.frame with rownames=cell_id and X/Y columns
+  labels    = labels,   # named vector: names = cell_id, values = label
+  pca       = pca,      # optional matrix/data.frame
+  umap      = umap,     # optional matrix/data.frame
+  clusters  = labels    # optional alternative cluster labels
+)
+```
+
+**Parameters**
+
+-   `count_exp` — expression matrix.
+
+-   `spatial` — coordinates; must align rownames with cell IDs used elsewhere.
+
+-   `labels` — named vector of reference labels (ground truth).
+
+-   `pca`, `umap`, `clusters` — optional; used for diagnostics/plots.
+
+**Common checks** - Row/column names must be consistent across objects.
+
+-   No duplicated cell IDs.
+
+-   `labels` must cover all cells you plan to evaluate.
+
+------------------------------------------------------------------------
+
+# 2. Train & Evaluate (Nested CV)
+
+STEAM.obj \<- RunSTEAM(
+
+STEAM.obj, mode = "nested",
+
+n_outer_folds = 5, n_inner_folds = 3,
+
+cv.cores = 10, \# parallel across outer folds
+
+allowParallel = FALSE, \# inner caret loop sequential for determinism
+
+n.size = 5,
+
+model = "rf",
+
+metric = "Kappa",
+
+maxnweights = 15000
+
 )
 
+```{r runsteam, eval=FALSE}
+STEAM.obj <- RunSTEAM(
+  STEAM.obj, mode = "nested",
+  n_outer_folds = 5, n_inner_folds = 3,
+  cv.cores = 10,             # parallel across outer folds
+  allowParallel = FALSE,     
+  n.size = 5,
+  model = "rf",
+  metric = "Kappa",
+  maxnweights = 15000
+)
 ```
+
+**Key parameters**
+
+-   `mode` — `"nested"` performs outer *and* inner cross‑validation (outer for unbiased evaluation; inner for tuning).
+
+-   `n_outer_folds`, `n_inner_folds` — fold counts.
+
+-   `cv.cores` — parallel workers for outer folds.
+
+-   `allowParallel` — whether caret may parallelize inner CV (often `FALSE` to avoid nested parallelism contention).
+
+-   `model`: The machine learning model to use for classification.
+
+    -   `rf` = RandomForest
+
+    -   `svm` = Support Vector Machines,
+
+    -   `xgb` = XGBoost
+
+    -   `multinom` = Multinomial Logistic Regression
+
+-   `metric` — caret optimization metric (e.g., `"Accuracy"`, `"Kappa"`).
+
+-   `maxnweights`, `n.size` — package‑specific compute/feature knobs.
+
+**Outputs**
+
+-   `STEAM.obj$nested$ncv` — nested CV object containing:
+
+-   `outer_result[[i]]$preds` — **outer test predictions** per fold with `predy` (prediction), `testy` (truth), and per‑class probabilities.
+
+-   `outer_result[[i]]$fit$pred` — **inner CV predictions** used for tuning.
+
+**Diagnostics**
+
+```{r diagnostics, eval=FALSE}
+ViewMetrics(STEAM.obj, view = "overall")
+ViewMetrics(STEAM.obj, view = "fold")
+ViewMetrics(STEAM.obj, fold = 1)
+
+plot_misclassified_cells(STEAM.obj)
+plot_misclassified_cells(STEAM.obj, fold = 1)
+
+feature_importance(STEAM.obj)
+feature_expression(STEAM.obj, "MBP", view = "pooled")
+feature_expression(STEAM.obj, "MBP", view = "facet")
+```
+
+-   `ViewMetrics()` — tabular summaries overall / per fold.
+-   `plot_misclassified_cells()` — visualize errors spatially or by fold.
+-   `feature_importance()` — model‑specific importance (e.g., RF Gini/perm).
+-   `feature_expression()` — expression of a gene/feature in different views.
 
 # Custom Model Training Examples
 
-```{r setup, eval=FALSE, include=TRUE}
-knitr::opts_chunk$set(eval = FALSE, include = TRUE)
+```{undefined eval=FALSE, include=FALSE}
 
 # Random Forest with custom tuning grid
 rf_grid <- expand.grid(mtry = c(100, 200, 300))
@@ -219,47 +294,221 @@ STEAM.obj <- RunSTEAM(
 
 ```
 
-# View the Performance Metrics from STEAM
+------------------------------------------------------------------------
 
-```{r fig.height=8, fig.width=8}
-# Evaluation metrics by generating Kappa, F1-score, Accuracy, etc.
-ViewMetrics(STEAM.obj)
+# 2. STEAMCorrection Analysis
+
+The STEAMCorrection system leverages spatial neighborhood information to identify and correct misclassified cells from your cross-validation results.
+This approach is based on the biological principle that spatially adjacent cells often share similar tissue types or functional states.
+
+## 2.1 Understanding the Algorithm
+
+STEAMCorrection works by:
+
+1.  **Identifying misclassified cells** from nested CV results
+
+2.  **Finding spatial neighbors** using k-nearest neighbors
+
+3.  **Applying hierarchical voting** where neighbors vote on the correct cell type
+
+4.  **Making corrections iteratively** with adaptive consensus thresholds
+
+5.  **Tracking progress** across multiple correction rounds
+
+The algorithm uses a hierarchical voting system:
+
+-   **1st choice corrections**: High consensus threshold (default 60%)
+
+-   **2nd/3rd choice corrections**: Lower thresholds for difficult cases
+
+-   **Stuck cell handling**: Even more lenient thresholds for cells that resist correction
+
+## 2.2 Basic Usage
+
+```{r anchor-default, eval=FALSE}
+# Run correction with default parameters
+STEAM.obj <- STEAMCorrection(STEAM.obj)
 
 ```
 
-# View the Feature Importance
+This automatically processes all cross-validation folds with sensible defaults:
 
-feature_importance is calculated depending on the type of model used in STEAM.obj during training.
-A brief overview of how feature importance for each model is calculated:
+-   `k = 8` neighbors
 
--   `rf`: using varImp() from the `caret` package, the importance scores are extracted and feature importance is calculated as the mean decrease in Gini.
--   `xgb`: this also uses varImp() from the `caret` package and computes importance using Gain, which represents the average improvement in the loss function when a feature is used in a split.
--   `svm`: the final model is extracted and computes the feature importance using the absolute magnitude of the weight for each feature. Feature weights are calculated from the dot product of SVM coefficients and the support vector matrix.
--   `multinom`: the coefficient matrix is extracted, containing the feature coefficients for each class. The feature importance is calculated as the sum of absolute coefficient values across all classes. The intercept term is omitted.
+-   `min_consensus = 0.6` (60% agreement for primary corrections)
 
-```{r fig.align="center", fig.height=3, fig.width=4}
-# View feature importance
-feature_importance(STEAM.obj, top_n = 10, title = "Top Features by Importance")
+-   `max_iterations = 10`
+
+-   Hierarchical voting with up to 3 voting levels
+
+## 2.3 Parameter Tuning
+
+For optimal results, you may need to adjust parameters based on your data characteristics:
+
+#### For dense, homogeneous tissues:
+
+```{r}
+STEAM.obj <- STEAMCorrection(STEAM.obj, 
+                             k = 12, # More neighbors for stable regions 
+                             min_consensus = 0.7, # Higher confidence threshold
+                             min_secondary_consensus = 0.4, # Still allow some flexibility
+                             max_iterations = 15, 
+                             verbose = TRUE )
+```
+
+#### For heterogeneous or boundary-rich tissues
+
+```{r}
+STEAM.obj <- STEAMCorrection(
+  STEAM.obj,
+  k = 6,                     # Fewer neighbors to avoid cross-boundary effects
+  min_consensus = 0.5,       # Lower threshold for primary corrections
+  min_secondary_consensus = 0.25, # More aggressive secondary corrections
+  max_voting_levels = 4,     # Allow 4th choice corrections
+  verbose = TRUE
+)
 
 ```
 
-# View Gene Expression Distribution across Clusters
+**Parameter Guidelines:**
 
-The feature_expression function extracts the expression values for the user-specified feature across the different layers and plots how the expression varies across layers.
+-   **k (neighbors)**: 6-12 typically work well.
+    Higher k = more stable but may blur boundaries
 
-```{r fig.align="center", fig.height=3, fig.width=4}
-# Show the gene expression per layer
-feature_expression(STEAM.obj, feature_name = "TMSB10", title = "Expression Across Layers")
+-   **min_consensus**: 0.5-0.8 range.
+    Higher = conservative, lower = aggressive
+
+-   **min_secondary_consensus**: Usually 0.3-0.5 of min_consensus
+
+-   **max_iterations**: 10-20 iterations usually sufficient
+
+-   **max_voting_levels**: 2-4 levels provide good coverage
+
+## 2.4 Understanding the Output
+
+```{r examine-results, eval=FALSE}
+# Check correction summary across all folds
+correction_results <- STEAM.obj$spatial_anchor_analysis$correction_results
+for(fold_name in names(correction_results)) {
+  fold_data <- correction_results[[fold_name]]
+  cat(sprintf("Fold %d: %.1f%% → %.1f%% accuracy (%d corrections)\n",
+              fold_data$fold_number,
+              fold_data$initial_accuracy * 100,
+              fold_data$final_accuracy * 100,
+              fold_data$total_corrections))
+}
 ```
 
-# View the Misclassifications
+## 2.5 Visualization and Analysis
 
-The plot_misclassified_cells function extracts the spatial coordinates and labels from the STEAM.obj and compares the true labels to the model's predictions in order to identify the misclassified cells.
-Misclassifications are shown as black dots on the plot.
+### Iterative Correction
 
-```{r fig.align="center", fig.height=4, fig.width=5}
+```{r plot, eval=FALSE}
+# Show correction progress for a specific fold
+IterativePlot(STEAM.obj, fold = 1)
 
-# Plot misclassified cells
-plot_misclassified_cells(STEAM.obj)
+# Show only key iterations
+# IterativePlot(STEAM.obj, fold = 1, iterations = c(0, 2, 4, 6))
 
+```
+
+### Accuracy Improvements
+
+```{r plot, eval=FALSE}
+# Bar chart showing accuracy gains per fold
+AccuracyPairedBarChart(STEAM.obj, show_corrections = FALSE)
+```
+
+### Neighborhood Analysis
+
+```{r plot, eval=FALSE}
+# Analyze when spatial correction works best
+NeighborhoodHomogeneityAnalysis(STEAM.obj)
+```
+
+### Error Pattern Analysis
+
+```{r}
+# Which tissue types benefit most from correction?
+ErrorAnalysisPlot(STEAM.obj)
+```
+
+## 3.6 Interpreting Results
+
+### What Makes a Good Correction?
+
+**High success indicators:**
+
+-   High neighborhood homogeneity (\>60% neighbors same type)
+
+-   Consistent voting across multiple neighbors
+
+-   Cell located in tissue interior (not boundaries)
+
+**Correction challenges:**
+
+-   Boundary regions between tissue types
+
+-   Isolated or rare cell types
+
+-   Noisy spatial coordinates
+
+-   Genuine biological heterogeneity
+
+------------------------------------------------------------------------
+
+# 4. Troubleshooting
+
+**Common Issues:**
+
+1.  **No corrections applied**:
+
+    -   Check if you have misclassified cells: `getMisclassifiedCells(STEAM.obj)`
+
+    -   Lower `min_consensus` threshold
+
+    -   Increase `max_voting_levels`
+
+2.  **Too many corrections**:
+
+    -   Increase `min_consensus`
+
+    -   Reduce `k` (fewer neighbors)
+
+    -   Check for spatial coordinate errors
+
+3.  **Poor correction quality**:
+
+    -   Examine `NeighborhoodHomogeneityAnalysis()` results
+
+    -   Consider tissue-specific parameter tuning
+
+    -   Validate spatial coordinates are accurate
+
+4.  **Slow performance**:
+
+    -   Reduce `max_iterations`
+
+    -   Use smaller `k` values
+
+    -   Process folds sequentially if memory limited
+
+## 4.1 Best Practices
+
+1.  **Start with defaults** then tune based on your tissue characteristics
+
+2.  **Examine results visually** using the plotting functions
+
+3.  **Validate corrections** make biological sense for your system
+
+4.  **Consider tissue boundaries** - corrections near boundaries may be less reliable
+
+5.  **Document parameters** used for reproducibility
+
+6.  **Cross-validate** correction performance on held-out data when possible
+
+# 5. Session info
+
+```{r session}
+sessionInfo()
 ```

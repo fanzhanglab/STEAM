@@ -1,3 +1,18 @@
+#' Internal: Neighborhood Averaging for STEAM Objects
+#'
+#' Applies local spatial neighborhood averaging to training or test data
+#' within a STEAM object. For each cell, expression profiles are replaced
+#' with the mean of all neighbors within an \code{n.size} window in X/Y
+#' coordinates (if at least two neighbors are found).
+#'
+#' @param STEAM.obj A STEAM object containing training and/or test data.
+#' @param n.size Numeric, neighborhood radius (coordinate units).
+#' @param is_train Logical, whether to apply to training (\code{TRUE}) or
+#'   test (\code{FALSE}) data.
+#'
+#' @return The updated STEAM object with an added \code{avg.matrix} in
+#'   \code{$train} or \code{$test}.
+#' @keywords internal
 neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
 
   # Helper function to find coordinate columns
@@ -19,11 +34,10 @@ neighborhood.avg <- function(STEAM.obj, n.size, is_train) {
 
   if (is_train) {
     avg_mat <- STEAM.obj$train$train.data.matrix
-    labels <- droplevels(factor(STEAM.obj$train$train.data.labels))
-    rn <- levels(labels)
+    rn <- unique(as.character(STEAM.obj$train$train.data.labels))
 
     if (length(rn) < 2) {
-      stop("Training labels contain only one class. Classification not possible!")
+      stop("Training labels contain only one class — classification not possible.")
     }
 
     for (i in seq_along(rn)) {

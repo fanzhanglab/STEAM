@@ -1,3 +1,9 @@
+#' Split STEAM object into training and testing sets
+#'
+#' @param STEAM.obj A STEAM object with expression, labels, and spatial slots
+#' @param train.ratio Numeric (0–1), proportion of data used for training
+#' @return Modified STEAM object with train/test subslots
+#' @keywords internal
 data.split <- function(STEAM.obj, train.ratio) {
 
   # Universal labels

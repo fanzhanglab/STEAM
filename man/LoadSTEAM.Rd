@@ -41,3 +41,11 @@ Object of class 'STEAM.Object'
 \description{
 STEAM object - Loading data for STEAM
 }
+\examples{
+\dontrun{
+  data("DLPFC")
+  obj <- LoadSTEAM(count_exp = DLPFC$count_exp,
+                   spatial = DLPFC$Spatial,
+                   labels  = DLPFC$labels)
+}
+}

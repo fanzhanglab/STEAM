@@ -15,25 +15,32 @@ BugReports: https://github.com/fanzhanglab/STEAM/issues
 Depends: 
     R (>= 4.0)
 Imports:
-  ggplot2,
-  caret,
-  e1071,
-  scales,
-  mclust,
-  gridExtra,
-  grid,
-  reshape2,
-  viridis,
-  grDevices,
-  stats,
-  utils,
-  randomForest,
-  aricode,
-  FNN
-Suggests: knitr,
+    ggplot2,
+    caret,
+    e1071,
+    scales,
+    mclust,
+    gridExtra,
+    grid,
+    reshape2,
+    viridis,
+    grDevices,
+    stats,
+    utils,
+    randomForest,
+    aricode,
+    FNN,
+    nestedcv,
+    RANN,
+    patchwork,
+    cowplot
+Suggests:
+    knitr,
     rmarkdown,
     ggpointdensity,
-    Seurat
+    Seurat,
+    testthat (>= 3.0.0),
+    dplyr
 LazyData: true
 LazyDataCompression: xz
 VignetteBuilder: knitr

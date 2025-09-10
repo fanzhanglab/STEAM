@@ -2,17 +2,41 @@
 % Please edit documentation in R/feature_expression.R
 \name{feature_expression}
 \alias{feature_expression}
-\title{Feature Expression}
+\title{Plot Feature Expression Across Layers or Labels}
 \usage{
-feature_expression(steam_obj, feature_name, title = "Expression Across Layers")
+feature_expression(
+  steam_obj,
+  feature_name,
+  view = c("pooled", "facet"),
+  title = "Expression Across Layers"
+)
 }
 \arguments{
-\item{steam_obj}{STEAM Obj}
+\item{steam_obj}{A STEAM object containing expression matrix, labels, and
+optionally nested CV results.}
 
-\item{feature_name}{Feature Name}
+\item{feature_name}{Character string, name of the feature (row name in
+\code{count_exp}) to plot.}
 
-\item{title}{title}
+\item{view}{Character, either \code{"pooled"} (all folds together) or
+\code{"facet"} (separate panels by outer fold). Defaults to \code{"pooled"}.}
+
+\item{title}{Character, plot title.}
+}
+\value{
+A \code{ggplot} object (invisibly). The plot is also printed.
 }
 \description{
-Feature Expression
+Visualizes the expression of a given feature (e.g., gene, protein) across
+layers or labels in a STEAM object. Supports pooled plotting across folds
+or faceted plotting by outer CV fold.
+}
+\examples{
+\dontrun{
+data(DLPFC)
+steam_obj <- LoadSTEAM(DLPFC, label.column = "Labels", assay = "SCT")
+steam_obj <- RunSTEAM(steam_obj, n_outer_folds = 2, n_inner_folds = 2,
+                      model = "rf", cv.cores = 2)
+feature_expression(steam_obj, "MBP", view = "facet")
+}
 }

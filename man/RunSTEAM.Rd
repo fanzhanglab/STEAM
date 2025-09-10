@@ -2,54 +2,79 @@
 % Please edit documentation in R/RunSTEAM.R
 \name{RunSTEAM}
 \alias{RunSTEAM}
-\title{Training and Evaluating Clustering performance with RunSTEAM()}
+\title{Run STEAM: Training and Evaluation}
 \usage{
 RunSTEAM(
   STEAM.obj,
+  mode = c("simple", "nested"),
   train.ratio = 0.8,
   n.size = 5,
   seed = 123,
   cv.folds = 10,
   cv.repeats = 3,
   trainval.ratio = 0.8,
+  n_outer_folds = 5,
+  n_inner_folds = 3,
   model = "rf",
   n.tree = 500,
   kernel = "linear",
   train.folder.name = "train.out",
   allowParallel = FALSE,
-  maxnweights = 5000
+  metric = "Kappa",
+  tune.grid = NULL,
+  outer_folds = NULL,
+  inner_folds = NULL,
+  verbose = TRUE,
+  cv.cores = 1,
+  parallel_mode = NULL,
+  maxnweights = 10000
 )
 }
 \arguments{
-\item{STEAM.obj}{Object of class STEAM.Object from LoadSTEAM()}
+\item{STEAM.obj}{A STEAM object created by \code{\link{LoadSTEAM}}.}
 
-\item{train.ratio}{training set ratio. Default is 0.8 (Splits 80\% data for training and 20\% for testing)}
+\item{mode}{Either "simple" (train/test split) or "nested" (nested CV).}
 
-\item{n.size}{Neighborhood size for neighborhood averaging}
+\item{train.ratio}{Proportion of data for training (simple mode only).}
 
-\item{seed}{Seed Value. Default is 123}
+\item{n.size}{Neighborhood size for neighborhood averaging (spatial smoothing).}
 
-\item{cv.folds}{#folds for Cross-validation}
+\item{seed}{Random seed (default 123).}
 
-\item{cv.repeats}{#repeats for repeated cross validation}
+\item{cv.folds}{Number of folds for CV (simple mode).}
 
-\item{trainval.ratio}{training set ratio for cross-validation. Default is 0.8 (Splits 80\% data for training and 20\% for validation)}
+\item{cv.repeats}{Number of repeats for repeated CV (simple mode).}
 
-\item{model}{Currently available methods - rf (for random forest) , svm (for Support Vector Machine), xgb (for Extreme Gradient Boosting), multinom (for Penalized Multinomial Regression)}
+\item{n_outer_folds}{Outer folds for nested CV.}
 
-\item{n.tree}{#trees (argument valid only for Random Forest). Deafult is 500}
+\item{n_inner_folds}{Inner folds for nested CV.}
 
-\item{kernel}{Default is Linear (argument valid only for svm)}
+\item{model}{Model type: "rf", "svm", "xgb", or "multinom".}
 
-\item{train.folder.name}{Training Output folder name}
+\item{kernel}{Kernel type for SVM ("linear" or "radial").}
 
-\item{allowParallel}{Boolean to perform parallel processing, if resources are available. Default is FALSE}
+\item{allowParallel}{Allow caret-level parallelism (default FALSE).}
 
-\item{maxnweights}{Maximum allowable number of weights. Default is 5000}
+\item{metric}{Metric to optimize during training (default "Kappa").}
+
+\item{tune.grid}{Optional custom tuning grid.}
+
+\item{outer_folds}{Optional precomputed outer folds (nested mode).}
+
+\item{inner_folds}{Optional precomputed inner folds (nested mode).}
+
+\item{verbose}{Logical, print messages (default TRUE).}
+
+\item{cv.cores}{Number of cores for nestedcv parallelism.}
+
+\item{parallel_mode}{Optional parallel backend ("multisession", etc.).}
+
+\item{maxnweights}{Maximum weights (for multinom models).}
 }
 \value{
-S4 Object of class 'STEAM.Object' with all outputs
+A STEAM object with trained models, predictions, and evaluation metrics.
 }
 \description{
-Training and Evaluating Clustering performance with RunSTEAM()
+Main entry point to train and evaluate STEAM models. Supports both
+simple train/test splitting and leakage-safe nested cross-validation.
 }

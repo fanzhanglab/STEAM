@@ -12,6 +12,14 @@
 #'
 #' @return Object of class 'STEAM.Object'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'   data("DLPFC")
+#'   obj <- LoadSTEAM(count_exp = DLPFC$count_exp,
+#'                    spatial = DLPFC$Spatial,
+#'                    labels  = DLPFC$labels)
+#' }
 LoadSTEAM <- function(count_exp = NULL, spatial = NULL, labels = NULL,
                       pca = NULL, umap = NULL, clusters = NULL,
                       Seurat.obj = NULL, label.column = NULL, assay = "SCT") {
