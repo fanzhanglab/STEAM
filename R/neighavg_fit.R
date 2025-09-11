@@ -29,6 +29,15 @@
 }
 
 # --- 1) fitter (stores what predict() needs) ---
+#' Internal: neighborhood averaging
+#'
+#' @param x Training matrix (samples × features), with rownames = cell IDs.
+#' @param y (Unused, present for modeling API compatibility).
+#' @param coords_all Data frame of spatial coordinates, rownames = cell IDs.
+#' @param n.size Integer, neighborhood radius (in coordinate units).
+#' @return An object of class \code{"neighavg_fit"} containing training
+#'   data and coordinate mappings.
+#' @keywords internal
 neighavg_fit <- function(x, y = NULL, coords_all, n.size = 5L) {
   if (is.null(rownames(x))) stop("Training matrix x must have rownames (cell ids).")
   if (is.null(colnames(x))) stop("Training matrix x must have colnames (features).")
