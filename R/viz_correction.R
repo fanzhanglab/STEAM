@@ -254,7 +254,7 @@ IterativePlot <- function(STEAM.obj, fold = NULL, iterations = NULL) {
         plot.title = element_text(hjust = 0.5, size = title_size),
         legend.position = "none",
         panel.border = element_rect(color = "gray80", fill = NA, size = 0.2),
-        plot.margin = margin(margin_size, margin_size, margin_size, margin_size, "pt")
+        plot.margin = margin(margin_size, margin_size, margin_size, margin_size, unit = "pt")
       )
 
     iteration_plots[[paste0("iter_", iteration_num)]] <- p

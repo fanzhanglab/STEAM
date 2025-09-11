@@ -13,9 +13,10 @@ RoxygenNote: 7.3.2
 URL: https://github.com/fanzhanglab/STEAM
 BugReports: https://github.com/fanzhanglab/STEAM/issues
 Depends: 
-    R (>= 4.0)
-Imports:
+    R (>= 4.0),
     ggplot2,
+    RANN
+Imports:
     caret,
     e1071,
     scales,
@@ -31,7 +32,6 @@ Imports:
     aricode,
     FNN,
     nestedcv,
-    RANN,
     patchwork,
     cowplot
 Suggests:
