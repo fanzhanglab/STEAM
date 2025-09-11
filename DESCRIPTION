@@ -15,7 +15,9 @@ BugReports: https://github.com/fanzhanglab/STEAM/issues
 Depends: 
     R (>= 4.0),
     ggplot2,
-    RANN
+    RANN,
+    patchwork,
+    dplyr
 Imports:
     caret,
     e1071,
@@ -32,7 +34,6 @@ Imports:
     aricode,
     FNN,
     nestedcv,
-    patchwork,
     cowplot
 Suggests:
     knitr,

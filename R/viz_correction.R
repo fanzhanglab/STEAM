@@ -254,7 +254,14 @@ IterativePlot <- function(STEAM.obj, fold = NULL, iterations = NULL) {
         plot.title = element_text(hjust = 0.5, size = title_size),
         legend.position = "none",
         panel.border = element_rect(color = "gray80", fill = NA, size = 0.2),
-        plot.margin = margin(margin_size, margin_size, margin_size, margin_size, unit = "pt")
+        plot.margin = ggplot2::margin(
+          t = margin_size,
+          r = margin_size,
+          b = margin_size,
+          l = margin_size,
+          unit = "pt"
+        )
+
       )
 
     iteration_plots[[paste0("iter_", iteration_num)]] <- p
@@ -584,17 +591,19 @@ NeighborhoodHomogeneityAnalysis <- function(STEAM.obj, k = NULL) {
     theme(
       plot.title = element_text(hjust = 0.5, size = 35, face = "bold"),
       plot.subtitle = element_text(hjust = 0.5, size = 32, color = "gray60"),
-      axis.title.x = element_text(size = 30, face = "bold", margin = margin(t = 20)),
+      axis.title.x = element_text(size = 30, face = "bold",
+                                  margin = ggplot2::margin(t = 20)),
       axis.title.y = element_text(size = 30, face = "bold"),
       axis.text.x = element_text(size = 28),
       axis.text.y = element_text(size = 28),
-      legend.title = element_text(size = 28, face = "bold", margin = margin(b = 15)),
+      legend.title = element_text(size = 28, face = "bold",
+                                  margin = ggplot2::margin(b = 15)),
       legend.text = element_text(size = 22),
-      legend.key.width = unit(2, "cm"),
-      legend.key.height = unit(1.5, "cm"),
+      legend.key.width = grid::unit(2, "cm"),
+      legend.key.height = grid::unit(1.5, "cm"),
       legend.title.align = 0.5,
-      legend.spacing = unit(0.5, "cm"),
-      legend.margin = margin(t = 10, b = 30, l = 15, r = 15),
+      legend.spacing = grid::unit(0.5, "cm"),
+      legend.margin = ggplot2::margin(t = 10, b = 30, l = 15, r = 15),
       panel.grid.minor = element_blank(),
       panel.grid.major.x = element_blank()
     ) +
@@ -705,10 +714,14 @@ ErrorAnalysisPlot <- function(STEAM.obj) {
       axis.text.y = element_text(size = 28),
       axis.title.x = element_text(size = 30),
       axis.title = element_text(size = 30),
-      legend.title = element_text(size = 30, face = "bold", margin = margin(b = 20)),
+      legend.title = element_text(
+        size = 30,
+        face = "bold",
+        margin = ggplot2::margin(b = 20)   # <-- fix here
+      ),
       legend.text = element_text(size = 28),
-      legend.key.width = unit(2, "cm"),
-      legend.key.height = unit(1.5, "cm"),
+      legend.key.width = grid::unit(2, "cm"),
+      legend.key.height = grid::unit(1.5, "cm"),
       panel.grid = element_blank(),
       legend.position = "right"
     ) +
@@ -743,7 +756,11 @@ ErrorAnalysisPlot <- function(STEAM.obj) {
       plot.title = element_text(hjust = 0.5, size = 30, face = "bold"),
       axis.title = element_text(size = 30),
       axis.text = element_text(size = 28),
-      legend.title = element_text(size = 30, face = "bold", margin = margin(b = 15)),
+      legend.title = element_text(
+        size = 30,
+        face = "bold",
+        margin = ggplot2::margin(b = 15)   # <-- fix here
+      ),
       legend.text = element_text(size = 28),
       legend.key.width = unit(2, "cm"),
       legend.key.height = unit(1.5, "cm"),
