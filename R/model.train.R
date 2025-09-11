@@ -821,7 +821,7 @@ model.train <- function(
     trControl = tr_ctrl_inner,
     outer_folds = outer_folds,
     inner_folds = inner_folds,
-    modifyX = "neighavg_fit",
+    modifyX = neighavg_fit,
     modifyX_useY = TRUE,
     modifyX_options = list(coords_all = coords_all, n.size = as.integer(n.size)),
     filterFUN = NULL,

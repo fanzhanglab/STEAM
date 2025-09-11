@@ -49,4 +49,3 @@ preds <- predict(fit, newdata = new_expr_matrix)
 }
 
 }
-\keyword{internal}

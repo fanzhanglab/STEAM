@@ -18,8 +18,8 @@
 # --- 0) helper to guess coordinate column names ---
 .guess_coord_names <- function(df) {
   cn <- colnames(df)
-  x_candidates <- c("x", "X", "Xcoord", "Xcorr", "xcoord", "xcorr", "pos_x", "px", "X_centroid", "x_centroid")
-  y_candidates <- c("y", "Y", "Ycoord", "Ycorr", "ycoord", "ycorr", "pos_y", "py", "Y_centroid", "y_centroid")
+  x_candidates <- c("x", "X", "Xcoord", "Xcorr", "xcoord", "xcorr", "pos_x", "px", "X_centroid", "x_centroid", "row")
+  y_candidates <- c("y", "Y", "Ycoord", "Ycorr", "ycoord", "ycorr", "pos_y", "py", "Y_centroid", "y_centroid", "col")
 
   x_name <- intersect(x_candidates, cn)
   y_name <- intersect(y_candidates, cn)
@@ -111,7 +111,7 @@ neighavg_fit <- function(x, y = NULL, coords_all, n.size = 5L) {
 #' preds <- predict(fit, newdata = new_expr_matrix)
 #' }
 #'
-#' @keywords internal
+#' @export
 predict.neighavg_fit <- function(object, newdata, ...) {
   stopifnot(!is.null(newdata))
   if (is.null(rownames(newdata))) stop("NEW data must have rownames (cell IDs).")
