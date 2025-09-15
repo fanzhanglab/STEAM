@@ -87,6 +87,14 @@ Data (DLPFC):
 
 - <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/tutorials/STEAM_DLPFC_tutorial.html">
   Tutorial of applying STEAM on DLPFC data </a>
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/tutorials/STEAM_Xenium_celltype_tutorial.html">
+  Tutorial of applying STEAM on XENIUM data </a>
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/tutorials/STEAM_CODEX_tutorial.html">
+  Tutorial of applying STEAM on CODEX data </a>
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/tutorials/BRCA1_preprocessing_tutorial.nb.html">
+  Tutorial of pre-processing BRCA1 data for STEAM</a>
+- <a href="https://htmlpreview.github.io/?https://github.com/fanzhanglab/STEAM/blob/main/tutorials/STEAM_BRCA1_tutorial.html">
+  Tutorial of applying STEAM on BRCA1 data </a>
 
 #### Below are several major steps of running STEAM:
 
