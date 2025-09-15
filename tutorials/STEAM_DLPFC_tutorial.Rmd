@@ -50,7 +50,7 @@ To run STEAM, you need the following components:
 
 # Load libraries
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 library(STEAM)
 library(Seurat)
 ```
@@ -70,12 +70,12 @@ data(DLPFC)
 
 You can input this data into STEAM in two ways:
 
-```{r load-seurat, eval=FALSE}
-STEAM.obj <- LoadSTEAM(
-  Seurat.obj   = DLPFC,
-  label.column = "Labels",
-  assay        = "SCT"
-)
+```{r Seurat example, include= FALSE}
+# STEAM.obj <- LoadSTEAM(
+#   Seurat.obj   = DLPFC,
+#   label.column = "Labels",
+#   assay        = "SCT"
+# )
 ```
 
 **Parameters**
@@ -88,14 +88,14 @@ STEAM.obj <- LoadSTEAM(
 
 ## 1.2 Load from matrices / data.frames
 
-```{r load-matrices, eval=FALSE}
+```{r}
 STEAM.obj <- LoadSTEAM(
-  count_exp = expr,     # genes x cells (or cells x genes; see package docs)
-  spatial   = coords,   # data.frame with rownames=cell_id and X/Y columns
-  labels    = labels,   # named vector: names = cell_id, values = label
-  pca       = pca,      # optional matrix/data.frame
-  umap      = umap,     # optional matrix/data.frame
-  clusters  = labels    # optional alternative cluster labels
+  count_exp = DLPFC$matrix,     # genes x cells (or cells x genes; see package docs)
+  spatial   = DLPFC$coordinates,   # data.frame with rownames=cell_id and X/Y columns
+  labels    = DLPFC$labels,   # named vector: names = cell_id, values = label
+  # pca       = pca,      # optional matrix/data.frame
+  # umap      = umap,     # optional matrix/data.frame
+  # clusters  = labels    # optional alternative cluster labels
 )
 ```
 
@@ -139,11 +139,12 @@ maxnweights = 15000
 
 )
 
-```{r runsteam, eval=FALSE}
+```{r}
 STEAM.obj <- RunSTEAM(
-  STEAM.obj, mode = "nested",
+  STEAM.obj, 
+  mode = "nested",
   n_outer_folds = 5, n_inner_folds = 3,
-  cv.cores = 10,             # parallel across outer folds
+  cv.cores = 1,             # parallel across outer folds
   allowParallel = FALSE,     
   n.size = 5,
   model = "rf",
@@ -151,6 +152,9 @@ STEAM.obj <- RunSTEAM(
   maxnweights = 15000
 )
 ```
+
+
+
 
 **Key parameters**
 
@@ -186,7 +190,7 @@ STEAM.obj <- RunSTEAM(
 
 **Diagnostics**
 
-```{r diagnostics, eval=FALSE}
+```{r}
 ViewMetrics(STEAM.obj, view = "overall")
 ViewMetrics(STEAM.obj, view = "fold")
 ViewMetrics(STEAM.obj, fold = 1)
@@ -206,7 +210,7 @@ feature_expression(STEAM.obj, "MBP", view = "facet")
 
 # Custom Model Training Examples
 
-```{undefined eval=FALSE, include=FALSE}
+```{r}
 
 # Random Forest with custom tuning grid
 rf_grid <- expand.grid(mtry = c(100, 200, 300))
@@ -325,7 +329,7 @@ The algorithm uses a hierarchical voting system:
 
 ## 2.2 Basic Usage
 
-```{r anchor-default, eval=FALSE}
+```{r}
 # Run correction with default parameters
 STEAM.obj <- STEAMCorrection(STEAM.obj)
 
@@ -386,7 +390,7 @@ STEAM.obj <- STEAMCorrection(
 
 ## 2.4 Understanding the Output
 
-```{r examine-results, eval=FALSE}
+```{r}
 # Check correction summary across all folds
 correction_results <- STEAM.obj$spatial_anchor_analysis$correction_results
 for(fold_name in names(correction_results)) {
@@ -403,7 +407,7 @@ for(fold_name in names(correction_results)) {
 
 ### Iterative Correction
 
-```{r plot, eval=FALSE}
+```{r}
 # Show correction progress for a specific fold
 IterativePlot(STEAM.obj, fold = 1)
 
@@ -414,14 +418,14 @@ IterativePlot(STEAM.obj, fold = 1)
 
 ### Accuracy Improvements
 
-```{r plot, eval=FALSE}
+```{r}
 # Bar chart showing accuracy gains per fold
 AccuracyPairedBarChart(STEAM.obj, show_corrections = FALSE)
 ```
 
 ### Neighborhood Analysis
 
-```{r plot, eval=FALSE}
+```{r}
 # Analyze when spatial correction works best
 NeighborhoodHomogeneityAnalysis(STEAM.obj)
 ```
